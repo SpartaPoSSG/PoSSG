@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { Button } from "flowbite-react";
+import { BiLogIn } from "react-icons/bi";
 import { useLocation } from "react-router-dom";
 import { Navbar } from "flowbite-react";
 
@@ -24,25 +26,37 @@ function Navbars() {
   return (
     <Navbar border fluid className="fixed left-0 right-0 top-0 z-50">
       <Navbar.Brand href="/">
-        {/* <img
+        <img
           alt="Logo"
-          className="mr-1 h-6 sm:h-9"
+          className="ml-6 mr-2 h-6 sm:h-9"
           src="/img/logo.png"
-        /> */}
+        />
         <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
           포쓱
         </span>
       </Navbar.Brand>
-      <div className="flex items-end ml-auto gap-x-4 mr-10 list-none">
+      <div className="flex items-center mr-auto gap-x-4 ml-12 list-none">
         <Navbar.Link theme={theme} href="/" className={getButtonStyle("/")}>
-          Home
+          프로젝트
         </Navbar.Link>
         <Navbar.Link
           theme={theme}
           href="/portfolio"
           className={getButtonStyle("/portfolio")}
         >
-          Portfolio
+          포트폴리오
+        </Navbar.Link>
+      </div>
+      <div className="flex items-center ml-auto gap-x-4 mr-10 list-none">
+        <Navbar.Link
+          theme={theme}
+          href="/login"
+          className={getButtonStyle("/login")}
+        >
+          <Button color="light">
+            <BiLogIn className="mr-2 h-5 w-5" />
+            <p>로그인</p>
+          </Button>
         </Navbar.Link>
       </div>
     </Navbar>

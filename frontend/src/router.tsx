@@ -3,6 +3,7 @@ import App from "./App";
 import Home from "./pages/Home";
 import Portfolio from "./pages/Portfolio";
 import NotFound from "./components/NotFound";
+import Login from "./pages/Login";
 
 const router = createBrowserRouter([
     {
@@ -17,6 +18,10 @@ const router = createBrowserRouter([
         {
           path: "portfolio",
           element: <Portfolio />,
+        },
+        {
+          path: "login",
+          element: <Login />,
         },
       ],
     },
