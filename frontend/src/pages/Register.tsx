@@ -36,7 +36,7 @@ const Register = () => {
   const handleCheckEmail = async (e: FormEvent) => {
     const emailResult = await checkEmail(signupForm.email);
 
-    if (emailResult?.data.isExist == true) {
+    if (emailResult?.data.isExist === true) {
       // 이메일 중복
       setValidMessage((prev) => ({
         ...prev,
@@ -62,7 +62,7 @@ const Register = () => {
         ...prev,
         nicknameMessage: "2자 이상 10자 이하로 입력해주세요.",
       }));
-      setIsValid({ ...isValid, nickname: false });
+      setIsValid({...isValid, nickname: false });
     } else {
       setValidMessage((prev) => ({
         ...prev,
@@ -70,7 +70,7 @@ const Register = () => {
       }));
       setIsValid({ ...isValid, nickname: true });
     }
-  }, [signupForm.nickname]);
+  }, [signupForm.nickname, isValid]);
 
   // 비밀번호 유효성 검사
   useEffect(() => {
@@ -89,7 +89,7 @@ const Register = () => {
       }));
       setIsValid({ ...isValid, password: true });
     }
-  }, [signupForm.password]);
+  }, [signupForm.password, isValid]);
 
   // 비밀번호 확인
   useEffect(() => {
@@ -106,13 +106,13 @@ const Register = () => {
       }));
       setIsValid({ ...isValid, checkedPassword: true });
     }
-  }, [signupForm.checkedPassword]);
+  }, [signupForm.password, signupForm.checkedPassword, isValid]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (isValid.nickname == true && isValid.password == true && isValid.checkedPassword == true) {
-      if (validMessage.emailMessage == "사용 가능한 이메일입니다.") {
+    if (isValid.nickname && isValid.password && isValid.checkedPassword) {
+      if (validMessage.emailMessage === "사용 가능한 이메일입니다.") {
         const registerResult = await register(signupForm.email, signupForm.password, signupForm.nickname);
 
         if (registerResult) {
@@ -214,7 +214,7 @@ const Register = () => {
                     </div>
                     <div className="ml-3 text-sm">
                       <label htmlFor="terms" className="font-light text-gray-500 dark:text-gray-300">
-                        포쓱의 <a className="font-medium text-primary-600 hover:underline dark:text-primary-500" href="#">이용약관</a>에 동의합니다.</label>
+                        포쓱의 <a className="font-medium text-primary-600 hover:underline dark:text-primary-500" href="/">이용약관</a>에 동의합니다.</label>
                     </div>
                   </div>
                   <button
