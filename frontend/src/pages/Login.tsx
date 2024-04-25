@@ -1,6 +1,6 @@
 import React, { useState, FormEvent, ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { login } from '../api/possgAxios';
 
 const Login = () => {
   const [email, setEmail] = useState<string>('');
@@ -18,23 +18,15 @@ const Login = () => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-    try {
-      if (email.trim() !== '' && password.trim() !== '') {
-        const response = await axios.post('api-address', {
-          email: email,
-          password: password,
-        });
+    if (email.trim() !== '' && password.trim() !== '') {
+      const loginResult = await login(email, password);
 
-        if (response.status === 200) {
-          navigate('/');
-          localStorage.setItem('token', response.data.token);
-          console.log('login success', response.data);
-        } else {
-          console.error('login fail');
-        }
+      if (loginResult) {
+        navigate('/');
+        localStorage.setItem('token', loginResult.data.token);
+      } else {
+        console.error('login fail');
       }
-    } catch (error) {
-      console.error(error);
     }
   };
 
