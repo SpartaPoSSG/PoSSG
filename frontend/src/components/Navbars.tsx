@@ -34,7 +34,13 @@ function Navbars() {
 
   useEffect(() => {
     setActiveLink(location.pathname);
-  }, [location.pathname]);
+
+    if (token) {
+      setLoggedIn(true);
+    } else {
+      setLoggedIn(false);
+    }
+  }, [location.pathname, token]);
 
   const getButtonStyle = (path: string) => {
     return path === activeLink ? theme.active.on : theme.active.off;
