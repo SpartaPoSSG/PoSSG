@@ -10,3 +10,9 @@ export interface LoginResponse {
 export interface EmailResponse {
     isExist: boolean;
 }
+
+export interface Folder {
+    sector: string;
+    src: string;
+    text: string;
+}
