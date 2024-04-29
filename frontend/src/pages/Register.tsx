@@ -70,7 +70,7 @@ const Register = () => {
       }));
       setIsValid({ ...isValid, nickname: true });
     }
-  }, [signupForm.nickname, isValid]);
+  }, [signupForm.nickname]);
 
   // 비밀번호 유효성 검사
   useEffect(() => {
@@ -89,7 +89,7 @@ const Register = () => {
       }));
       setIsValid({ ...isValid, password: true });
     }
-  }, [signupForm.password, isValid]);
+  }, [signupForm.password]);
 
   // 비밀번호 확인
   useEffect(() => {
@@ -106,7 +106,7 @@ const Register = () => {
       }));
       setIsValid({ ...isValid, checkedPassword: true });
     }
-  }, [signupForm.password, signupForm.checkedPassword, isValid]);
+  }, [signupForm.password, signupForm.checkedPassword]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
