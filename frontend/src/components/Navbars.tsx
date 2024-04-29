@@ -82,8 +82,8 @@ function Navbars() {
           href="/login"
           className={getButtonStyle("/login")}
         >
-          <Button color="light">
-            <BiLogIn className={`mr-2 h-5 w-5 ${activeLink === 'login' ? 'active' : ''}`} onClick={handleLoginButtonClick} />
+          <Button color="light" className={`${activeLink === 'login' ? 'active' : ''}`} onClick={handleLoginButtonClick}>
+            <BiLogIn className="mr-2 h-5 w-5"/>
             {loggedIn ? '로그아웃' : '로그인'}
           </Button>
         </Navbar.Link>
