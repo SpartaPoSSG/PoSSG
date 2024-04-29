@@ -23,6 +23,7 @@ const Login = () => {
 
       if (loginResult) {
         navigate('/');
+        console.log("token: ", loginResult.data.token);
         localStorage.setItem('token', loginResult.data.token);
       } else {
         console.error('login fail');
