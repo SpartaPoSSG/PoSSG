@@ -24,10 +24,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-^6i9wpu(o&0+(l_4^yy7%y1o5*8nzow!3m$ib5y%45unp-4a)g'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
+# In settings.py
+APPEND_SLASH = False
 
 # Application definition
 
@@ -42,6 +44,7 @@ INSTALLED_APPS = [
     'possg',
     
     # 설치한 라이브러리
+    'corsheaders',
     'rest_framework',
     'rest_framework_simplejwt',
     
@@ -55,7 +58,8 @@ AUTH_USER_MODEL = 'common.User'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
+    ),
+
 }
 
 # 추가 설정
@@ -91,8 +95,12 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
 
+CORS_ALLOW_ALL_ORIGINS = True #(모든 포트 허용)
+CORS_ORIGIN_ALLOW_ALL = True # <- 모든 호스트 허용
+CORS_ALLOW_CREDENTIALS = True # <-쿠키가 cross-site HTTP 요청에 포함될 수 있다
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
