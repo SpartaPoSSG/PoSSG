@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, FormEvent } from "react";
 import { Button } from "flowbite-react";
 import { BiLogIn } from "react-icons/bi";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Navbar } from "flowbite-react";
+import { user } from "../api/possgAxios";
 
 const theme = {
   active: {
@@ -32,11 +33,22 @@ function Navbars() {
     }
   };
 
+  const getUserNickname = async () => {
+    if (token) {
+      const userInfoResult = await user(token);
+
+      if (userInfoResult?.data) {
+        setUserName(userInfoResult.data.nickname);
+      }
+    }
+  }
+
   useEffect(() => {
     setActiveLink(location.pathname);
 
     if (token) {
       setLoggedIn(true);
+      getUserNickname();
     } else {
       setLoggedIn(false);
     }

@@ -1,5 +1,5 @@
 import axios, { AxiosResponse, isAxiosError } from "axios";
-import { EmailResponse, LoginResponse, RegisterResponse } from "../interfaces/Interfaces";
+import { EmailResponse, LoginResponse, RegisterResponse, User, Users } from "../interfaces/Interfaces";
 
 const possgAxios = axios.create({
 baseURL: "http://35.192.203.252:8000/api",
@@ -74,3 +74,43 @@ export const checkEmail = async (
         }
     }
 };
+
+// 회원정보 전체 반환
+export const users = async (
+): Promise<AxiosResponse<Users, any> | null> => {
+    try {
+        const response = await possgAxios.get(
+            "members/list"
+        );
+        return response;
+    } catch (error) {
+        if(isAxiosError<Users>(error)) {
+            console.log(`Error: ${error.response?.status} ${error.message}`);
+            return null;
+        } else {
+            return null;
+        }
+    }
+};
+
+// 내 정보 반환
+export const user = async (
+    token: string
+): Promise<AxiosResponse<User, any> | null> => {
+    try {
+        const response = await possgAxios.get(
+            "members/member",
+            { headers: { Authorization: `Bearer ${token}` }}
+        );
+        return response;
+    } catch (error) {
+        if(isAxiosError<User>(error)) {
+            console.log(`Error: ${error.response?.status} ${error.message}`);
+            return null;
+        } else {
+            return null;
+        }
+    }
+};
+
+// 로그아웃
