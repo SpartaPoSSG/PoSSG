@@ -5,6 +5,7 @@ import Portfolio from "./pages/Portfolio";
 import NotFound from "./components/NotFound";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import ProjectDetail from "./pages/ProjectDetail";
 
 const router = createBrowserRouter([
     {
@@ -27,6 +28,10 @@ const router = createBrowserRouter([
         {
           path: "register",
           element: <Register />,
+        },
+        {
+          path: "project-detail",
+          element: <ProjectDetail />,
         },
       ],
     },
