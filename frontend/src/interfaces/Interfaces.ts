@@ -11,6 +11,13 @@ export interface EmailResponse {
     isExist: boolean;
 }
 
+export interface User {
+    email: string;
+    nickname: string;
+}
+
+export interface Users extends Array<User> {}
+
 export interface Folder {
     sector: string;
     src: string;
