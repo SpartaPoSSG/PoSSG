@@ -2,10 +2,12 @@ import React, { useState, FormEvent } from 'react';
 import ProjectFolder from '../components/ProjectFolder';
 import { Folder } from '../interfaces/Interfaces';
 import { editState } from '../atom'; // 새로 추가된 import 문
+import { useNavigate } from 'react-router-dom';
 
 
 
 const Home = () => {
+    const navigate = useNavigate(); 
     const [folders, setFolders] = useState<{ [key: string]: string[] }>({
         '대외활동': [],
         '공모전': [],
@@ -19,6 +21,8 @@ const Home = () => {
         '동아리': '',
         '교내활동': ''
     });
+
+    const [selectedFolder, setSelectedFolder] = useState<string | null>(null); // 선택된 폴더명 상태 추가
 
     const handleMakeFolder = async (e: FormEvent, sector: string) => {
         e.preventDefault();
@@ -43,6 +47,11 @@ const Home = () => {
             handleMakeFolder(e, sector);
         }
     };
+
+    const handleFolderClick = (folderName: string) => {
+        setSelectedFolder(folderName);
+        navigate(`/project-detail/${folderName}`);
+      };
 
     return (
         <>
@@ -75,6 +84,7 @@ const Home = () => {
                                         <ProjectFolder
                                             src={'img/example-img.png'}
                                             text={folder}
+                                            onClick={() => handleFolderClick(folder)} // 클릭 이벤트 핸들러 추가
                                         />
                                     </div>
                                 ))}
@@ -107,6 +117,7 @@ const Home = () => {
                                         <ProjectFolder
                                             src={'img/example-img.png'}
                                             text={folder}
+                                            onClick={() => handleFolderClick(folder)}
                                         />
                                     </div>
                                 ))}
@@ -138,6 +149,7 @@ const Home = () => {
                                         <ProjectFolder
                                             src={'img/example-img.png'}
                                             text={folder}
+                                            onClick={() => handleFolderClick(folder)}
                                         />
                                     </div>
                                 ))}
@@ -169,6 +181,7 @@ const Home = () => {
                                         <ProjectFolder
                                             src={'img/example-img.png'}
                                             text={folder}
+                                            onClick={() => handleFolderClick(folder)}
                                         />
                                     </div>
                                 ))}

@@ -5,7 +5,7 @@ import { editState } from '../atom';
 import { CustomFlowbiteTheme, TextInput } from 'flowbite-react';
 
 function ProjectFolder(props: {
-    text: string; src: string; 
+    text: string; src: string; onClick: () => void;
 }) {
 
     //const [editMode, setEditMode] = useRecoilState(editState);
@@ -52,7 +52,7 @@ function ProjectFolder(props: {
 
     return (
         <>
-        <div className='flex flex-1 bg-white rounded-lg ml-1 mr-1 shadow-inner outline outline-1 outline-neutral-200 hover:outline-blue-500/50'>
+        <div className='flex flex-1 bg-white rounded-lg ml-1 mr-1 shadow-inner outline outline-1 outline-neutral-200 hover:outline-blue-500/50' onClick={props.onClick}>
             <figure className='relative w-full h-full flex flex-col'>
             <div className="relative">
                 <img className='h-48 rounded-lg rounded-b-none object-cover w-full' src={props.src} alt="Project Folder" />
