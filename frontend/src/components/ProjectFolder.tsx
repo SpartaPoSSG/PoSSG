@@ -52,7 +52,7 @@ function ProjectFolder(props: {
     };
 
     const handleFolderClick = () => {
-        navigate(`/project-detail/${titleInput}`);
+        navigate(`/project-detail/${props.sector}/${titleInput}`);
     };
 
     return (

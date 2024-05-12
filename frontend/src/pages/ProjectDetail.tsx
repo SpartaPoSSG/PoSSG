@@ -9,10 +9,9 @@ pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/$
 
 const ProjectDetail = () => {
   const { folderName } = useParams<{ folderName: string }>();
+  const { sector } = useParams<{ sector: string }>();
   const [isActive, setActive] = useState<boolean>(false);
-  const [uploadedInfo, setUploadedInfo] = useState<any>(null);
-  const [uploadFile, setUploadFile] = useState<File | null>(null);
-  const [previewImage, setPreviewImage] = useState<string>('');
+  const [filePreviews, setFilePreviews] = useState<{ file: File; preview: string }[]>([]);
   
   const Logo = () => (
     <svg className="w-24 h-24 mt-5 pointer-events-none" x="0px" y="0px" viewBox="0 0 24 24">
@@ -39,31 +38,35 @@ const ProjectDetail = () => {
     e.preventDefault();
     setActive(false);
 
-    const file = e.dataTransfer.files[0];
-    setFileInfo(file);
+    const files = e.dataTransfer.files;
+    
+    Array.from(files).forEach(file => {
+      // 파일의 미리보기 이미지 설정
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        if (e.target && e.target.result) {
+          setFilePreviews(prevFilePreviews => [...prevFilePreviews, { file, preview: e.target?.result as string }]);
+        }
+      };
+      reader.readAsDataURL(file);
+    });
   };
 
   const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const file = e.target.files[0];
-      setFileInfo(file);
+    if (e.target.files) {
+      const files = Array.from(e.target.files);
+
+      // 각 파일의 미리보기 이미지 설정
+      files.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          if (e.target && e.target.result) {
+            setFilePreviews(prevFilePreviews => [...prevFilePreviews, { file, preview: e.target?.result as string }]);
+          }
+        };
+        reader.readAsDataURL(file);
+      });
     }
-  };
-
-  const setFileInfo = (file: File) => {
-    const { name, size: byteSize, type } = file;
-    const size = (byteSize / (1024 * 1024)).toFixed(2) + 'MB';
-    setUploadedInfo({ name, size, type });
-    setUploadFile(file);
-
-    // 미리보기 이미지 설정
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      if (e.target && e.target.result) {
-        setPreviewImage(e.target.result.toString());
-      }
-    };
-    reader.readAsDataURL(file);
   };
   
 
@@ -74,7 +77,7 @@ const ProjectDetail = () => {
               <div className='flex-1 flex-grow-4 self-start max-w-none prose-lg mx-4 text-gray-700'>
                 <div className='comp_summary mx-auto md:w-[80%]'>
                   <div className='flex justify-between items-center pt-12 pb-2 border-b border-gray-500'>
-                      <p className='text-xl font-PretendardVariable font-semibold ml-3'>{folderName}</p>
+                      <p className='text-xl font-PretendardVariable font-semibold ml-3'>{sector}&nbsp;/&nbsp;{folderName}</p>
                       <label
                         htmlFor="fileInput"
                         className="bg-blue-900 text-white text-xs font-PretendardVariable font-normal rounded-md py-2 px-5 mr-3 transition duration-200 ease-in-out cursor-pointer"
@@ -87,7 +90,19 @@ const ProjectDetail = () => {
                         className="hidden"
                         accept='.png, .jpeg, .pdf'
                         onChange={handleUpload}
+                        multiple
                       />
+                  </div>
+                  <div className='mt-3'>
+                    <div className='grid grid-cols-1 md:grid-cols-5 gap-2 ml-3 mr-3 mt-5 mb-5'>
+                      <div className='flex flex-col w-full pb-1'>
+                        {/* 자료 반환한 거 띄우는 위치 */}
+                        <ProjectPreview
+                          name={'example'}
+                          src={''}
+                        />
+                      </div>
+                    </div>
                   </div>
                   <div className='mt-3'>
                     <label
@@ -97,43 +112,54 @@ const ProjectDetail = () => {
                       onDragLeave={handleDragEnd}
                       onDrop={handleDrop}
                     >
-                      {uploadedInfo ? (
+                      {filePreviews.length ? (
                         <>
-                        {uploadedInfo.type === 'application/pdf' && (
-                          <Document
-                            file={uploadFile}
-                            className={'hidden'}
-                            onLoadSuccess={(pdf) => {
-                              pdf.getPage(1).then((page) => {
-                                const viewport = page.getViewport({ scale: 1 });
-                                const canvas = document.createElement('canvas');
-                                const canvasContext = canvas.getContext('2d');
-                                if (canvasContext) {
-                                  canvas.width = viewport.width;
-                                  canvas.height = viewport.height;
-                                  page.render({ canvasContext, viewport }).promise.then(() => {
-                                    canvas.toBlob((blob) => {
-                                      if (blob) {
-                                        const imageUrl = URL.createObjectURL(blob);
-                                        setPreviewImage(imageUrl);
+                        <div className='grid grid-cols-1 md:grid-cols-5 gap-2 ml-3 mr-3 mt-5 mb-5'>
+                          {filePreviews.map((filePreviews, index) => (
+                            <div key={index} className='flex flex-col w-full pb-1'>
+                              {filePreviews.file.type === 'application/pdf' && (
+                                <Document
+                                  file={filePreviews.file}
+                                  className={'hidden'}
+                                  onLoadSuccess={(pdf) => {
+                                    pdf.getPage(1).then((page) => {
+                                      const viewport = page.getViewport({ scale: 1 });
+                                      const canvas = document.createElement('canvas');
+                                      const canvasContext = canvas.getContext('2d');
+                                      if (canvasContext) {
+                                        canvas.width = viewport.width;
+                                        canvas.height = viewport.height;
+                                        page.render({ canvasContext, viewport }).promise.then(() => {
+                                          canvas.toBlob((blob) => {
+                                            if (blob) {
+                                              const imageUrl = URL.createObjectURL(blob);
+                                              setFilePreviews(prevFilePreviews => {
+                                                const updatedPreviews = [...prevFilePreviews];
+                                                updatedPreviews[index].preview = imageUrl;
+                                                return updatedPreviews;
+                                              });
+                                            }
+                                          });
+                                        });
                                       }
                                     });
-                                  });
-                                }
-                              });
-                            }}
-                          >
-                            <Page pageNumber={1} />
-                          </Document>
-                        )}
-                        <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
-                          <div className='flex flex-col w-full p-2'>
-                            <ProjectPreview
-                                name={uploadedInfo.name}
-                                src={previewImage}
-                            />
-                          </div>
+                                  }}
+                                >
+                                  <Page pageNumber={1} />
+                                </Document>
+                              )}
+                              <ProjectPreview
+                                name={filePreviews.file.name}
+                                src={filePreviews.preview}
+                              />
+                            </div>
+                          ))}
                         </div>
+                        <button
+                            type="submit"
+                            className="bg-blue-900 text-white text-s font-PretendardVariable font-normal rounded-md py-2 px-10 mb-3 transition duration-200 ease-in-out cursor-pointer">
+                            업로드하기
+                        </button>
                         </>
                       ) : (
                         <>
@@ -142,7 +168,7 @@ const ProjectDetail = () => {
                           <p className="mb-5 font-PretendardVariable text-sm">파일당 최대 3MB</p>
                         </>
                       )}
-                      <input type="file" className="file hidden" accept='.png, .jpeg, .pdf' onChange={handleUpload} />
+                      <input type="file" className="file hidden" accept='.png, .jpeg, .pdf' onChange={handleUpload} multiple />
                     </label>
                   </div>
                 </div>
