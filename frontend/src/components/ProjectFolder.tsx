@@ -1,16 +1,17 @@
-import React, { useState } from 'react';
+import React, { FormEvent, useState } from 'react';
 import { MdEdit,MdDelete, MdPhoto } from "react-icons/md";
 import { useRecoilState } from 'recoil';
 import { editState } from '../atom';
 import { CustomFlowbiteTheme, TextInput } from 'flowbite-react';
+import { manageFolder } from '../api/possgAxios';
 
 function ProjectFolder(props: {
-    text: string; src: string; onClick: () => void;
+    sector: string; text: string; src: string; onClick: () => void;
 }) {
 
+    const token = localStorage.getItem('token');
     //const [editMode, setEditMode] = useRecoilState(editState);
     const [editMode, setEditMode] = useState(false); // 폴더별로 수정 모드를 관리하는 상태
-
     const [titleInput, setTitleInput] = useState<string>(props.text);
 
     const handleFolderNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -32,18 +33,20 @@ function ProjectFolder(props: {
         setEditMode(!editMode);
     };
 
-    const handleFolderNameSubmit = () => {
-        // 폴더명 수정 후 백엔드에 수정된 내용 전달하는 로직 추가
-        // 수정된 내용은 is_Exist 1 번으로 설정해서 전달해야 함
-        // fetch('/api/updateFolderName', {
-        //     method: 'POST',
-        //     body: JSON.stringify({ folderName, is_Exist: 1 }), // 수정된 내용과 is_Exist 값을 전달
-        // });
+    const handleFolderNameSubmit = async () => {
+        // 폴더명 수정 후 백엔드에 수정된 내용 전달
+        if (token) {
+            const folderResult = await manageFolder(token, {sector: props.sector, title: titleInput, is_Exist: 1});
+        }
+
         setEditMode(false); // 수정 모드 종료
     };
 
-    const handleDeleteFolder = () => {
-        // 폴더 삭제 로직 구현
+    const handleDeleteFolder = async () => {
+        // 폴더 삭제
+        if (token) {
+            const folderResult = await manageFolder(token, {sector: props.sector, title: titleInput, is_Exist: 2});
+        }
     };
 
     const handleUploadPhoto = () => {

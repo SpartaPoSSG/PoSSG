@@ -3,11 +3,14 @@ import ProjectFolder from '../components/ProjectFolder';
 import { Folder } from '../interfaces/Interfaces';
 import { editState } from '../atom'; // 새로 추가된 import 문
 import { useNavigate } from 'react-router-dom';
+import { manageFolder } from '../api/possgAxios';
 
 
 
 const Home = () => {
     const navigate = useNavigate(); 
+    const token = localStorage.getItem('token');
+
     const [folders, setFolders] = useState<{ [key: string]: string[] }>({
         '대외활동': [],
         '공모전': [],
@@ -32,8 +35,11 @@ const Home = () => {
             newFolders[sector] = [...folders[sector], newFolderName];
             setFolders(newFolders);
             setNewFolderNames({...newFolderNames, [sector]: ''});
+
             // 여기서 백엔드로 폴더 생성 요청을 보낼 수 있습니다.
-            // 예: fetch('/api/createFolder', { method: 'POST', body: JSON.stringify({ sector, folderName: newFolderName }) })
+            if (token) {
+                const folderResult = await manageFolder(token, {sector: sector, title: newFolderName, is_Exist: 0});
+            }
         }
     };
 
@@ -82,6 +88,7 @@ const Home = () => {
                                 {folders['대외활동'].map((folder, index) => (
                                     <div key={index} className='flex flex-col w-full p-2'>
                                         <ProjectFolder
+                                            sector={'대외활동'}
                                             src={'img/example-img.png'}
                                             text={folder}
                                             onClick={() => handleFolderClick(folder)} // 클릭 이벤트 핸들러 추가
@@ -115,6 +122,7 @@ const Home = () => {
                                 {folders['공모전'].map((folder, index) => (
                                     <div key={index} className='flex flex-col w-full p-2'>
                                         <ProjectFolder
+                                            sector={'공모전'}
                                             src={'img/example-img.png'}
                                             text={folder}
                                             onClick={() => handleFolderClick(folder)}
@@ -147,6 +155,7 @@ const Home = () => {
                                 {folders['동아리'].map((folder, index) => (
                                     <div key={index} className='flex flex-col w-full p-2'>
                                         <ProjectFolder
+                                            sector={'동아리'}
                                             src={'img/example-img.png'}
                                             text={folder}
                                             onClick={() => handleFolderClick(folder)}
@@ -179,6 +188,7 @@ const Home = () => {
                                 {folders['교내활동'].map((folder, index) => (
                                     <div key={index} className='flex flex-col w-full p-2'>
                                         <ProjectFolder
+                                            sector={'교내활동'}
                                             src={'img/example-img.png'}
                                             text={folder}
                                             onClick={() => handleFolderClick(folder)}
