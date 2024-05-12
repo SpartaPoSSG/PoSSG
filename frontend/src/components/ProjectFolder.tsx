@@ -34,7 +34,7 @@ function ProjectFolder(props: {
     const handleFolderNameSubmit = async () => {
         // 폴더명 수정 후 백엔드에 수정된 내용 전달
         if (token) {
-            const folderResult = await manageFolder(token, {sector: props.sector, title: titleInput, is_Exist: 1});
+            const folderResult = await manageFolder(token, {sector: props.sector, title: props.text, new_title: titleInput, is_Exist: 1});
         }
 
         setEditMode(false); // 수정 모드 종료
@@ -43,7 +43,7 @@ function ProjectFolder(props: {
     const handleDeleteFolder = async () => {
         // 폴더 삭제
         if (token) {
-            const folderResult = await manageFolder(token, {sector: props.sector, title: titleInput, is_Exist: 2});
+            const folderResult = await manageFolder(token, {sector: props.sector, title: titleInput, new_title: "", is_Exist: 2});
         }
     };
 
@@ -82,8 +82,11 @@ function ProjectFolder(props: {
                         editMode ? "text-blue-700" : ""
                         }`}
                         onClick={() => {
-                            handleFolderNameSubmit();
-                            handleEditToggle();
+                            if (editMode) {
+                                handleFolderNameSubmit(); // 수정 완료 버튼 클릭 시 수정 내용을 부모 컴포넌트로 전달
+                            } else {
+                                handleEditToggle(); // 수정 모드 토글
+                            }
                         }}
                     />
                 </div>

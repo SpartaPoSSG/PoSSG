@@ -26,6 +26,7 @@ export interface Sector {
 export interface Folder {
     sector: string;
     title: string;
+    new_title: string;
     is_Exist: number;
 }
 

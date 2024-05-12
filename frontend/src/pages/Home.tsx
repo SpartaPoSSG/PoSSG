@@ -43,7 +43,7 @@ const Home = () => {
 
             // 폴더 생성
             if (token) {
-                const folderResult = await manageFolder(token, {sector: sector, title: newFolderName, is_Exist: 0});
+                const folderResult = await manageFolder(token, {sector: sector, title: newFolderName, new_title: "" ,is_Exist: 0});
             }
         }
     };
