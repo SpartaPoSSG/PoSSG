@@ -3,11 +3,15 @@ import { useParams } from 'react-router-dom';
 import { BiUpload } from "react-icons/bi";
 import Footer from '../components/Footer';
 import ProjectPreview from '../components/ProjectPreview';
+import { Document, Page, pdfjs } from "react-pdf";
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
+
 
 const ProjectDetail = () => {
   const { folderName } = useParams<{ folderName: string }>();
   const [isActive, setActive] = useState<boolean>(false);
   const [uploadedInfo, setUploadedInfo] = useState<any>(null);
+  const [uploadFile, setUploadFile] = useState<File | null>(null);
   const [previewImage, setPreviewImage] = useState<string>('');
   
   const Logo = () => (
@@ -40,7 +44,7 @@ const ProjectDetail = () => {
   };
 
   const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
+    if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
       setFileInfo(file);
     }
@@ -50,6 +54,7 @@ const ProjectDetail = () => {
     const { name, size: byteSize, type } = file;
     const size = (byteSize / (1024 * 1024)).toFixed(2) + 'MB';
     setUploadedInfo({ name, size, type });
+    setUploadFile(file);
 
     // 미리보기 이미지 설정
     const reader = new FileReader();
@@ -94,6 +99,33 @@ const ProjectDetail = () => {
                     >
                       {uploadedInfo ? (
                         <>
+                        {uploadedInfo.type === 'application/pdf' && (
+                          <Document
+                            file={uploadFile}
+                            className={'hidden'}
+                            onLoadSuccess={(pdf) => {
+                              pdf.getPage(1).then((page) => {
+                                const viewport = page.getViewport({ scale: 1 });
+                                const canvas = document.createElement('canvas');
+                                const canvasContext = canvas.getContext('2d');
+                                if (canvasContext) {
+                                  canvas.width = viewport.width;
+                                  canvas.height = viewport.height;
+                                  page.render({ canvasContext, viewport }).promise.then(() => {
+                                    canvas.toBlob((blob) => {
+                                      if (blob) {
+                                        const imageUrl = URL.createObjectURL(blob);
+                                        setPreviewImage(imageUrl);
+                                      }
+                                    });
+                                  });
+                                }
+                              });
+                            }}
+                          >
+                            <Page pageNumber={1} />
+                          </Document>
+                        )}
                         <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
                           <div className='flex flex-col w-full p-2'>
                             <ProjectPreview

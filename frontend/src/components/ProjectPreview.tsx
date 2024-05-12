@@ -17,7 +17,7 @@ function ProjectPreview(props: {
     return (
         <>
         <div className='flex flex-1 bg-white rounded-lg ml-1 mr-1 shadow-inner outline outline-1 outline-neutral-200 hover:outline-blue-500/50'>
-            <figure className='relative w-full h-full flex flex-col'>
+            <figure className='relative w-48 h-full flex flex-col'>
             <div className="relative">
                 <img className='h-48 rounded-lg rounded-b-none cursor-pointer object-contain w-full' src={props.src} alt="Project Folder"/>
                 <div className="absolute top-2 right-2 flex">
