@@ -1,5 +1,5 @@
 import axios, { AxiosResponse, isAxiosError } from "axios";
-import { EmailResponse, LoginResponse, RegisterResponse, User, Users } from "../interfaces/Interfaces";
+import { EmailResponse, Folder, FolderResponse, LoginResponse, RegisterResponse, User, Users } from "../interfaces/Interfaces";
 
 const possgAxios = axios.create({
 baseURL: "http://35.192.203.252:8000/api",
@@ -113,4 +113,24 @@ export const user = async (
     }
 };
 
-// 로그아웃
+// 폴더 생성(0), 수정(1), 삭제(2)
+export const manageFolder = async (
+    token: string,
+    folderData: Folder
+): Promise<AxiosResponse<FolderResponse, any> | null> => {
+    try {
+        const response = await possgAxios.post(
+            "community/create",
+            folderData,
+            { headers: { Authorization: `Bearer ${token}` }},
+        );
+        return response;
+    } catch (error) {
+        if(isAxiosError<FolderResponse>(error)) {
+            console.log(`Error: ${error.response?.status} ${error.message}`);
+            return null;
+        } else {
+            return null;
+        }
+    }
+};

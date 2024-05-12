@@ -18,8 +18,17 @@ export interface User {
 
 export interface Users extends Array<User> {}
 
+export interface Sector {
+    name: string;
+    folders: string[];
+}
+
 export interface Folder {
     sector: string;
-    src: string;
-    text: string;
+    title: string;
+    is_Exist: number;
+}
+
+export interface FolderResponse {
+    message: string;
 }
