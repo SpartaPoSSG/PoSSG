@@ -18,6 +18,11 @@ export interface User {
 
 export interface Users extends Array<User> {}
 
+export interface Sector {
+    name: string;
+    folders: string[];
+}
+
 export interface Folder {
     sector: string;
     title: string;
