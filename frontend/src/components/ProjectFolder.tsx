@@ -1,17 +1,15 @@
-import React, { FormEvent, useState } from 'react';
+import React, { useState } from 'react';
 import { MdEdit,MdDelete, MdPhoto } from "react-icons/md";
-import { useRecoilState } from 'recoil';
-import { editState } from '../atom';
 import { CustomFlowbiteTheme, TextInput } from 'flowbite-react';
 import { manageFolder } from '../api/possgAxios';
+import { useNavigate } from 'react-router-dom';
 
 function ProjectFolder(props: {
-    sector: string; text: string; src: string; onClick: () => void;
+    sector: string; text: string; src: string;
 }) {
-
+    const navigate = useNavigate(); 
     const token = localStorage.getItem('token');
-    //const [editMode, setEditMode] = useRecoilState(editState);
-    const [editMode, setEditMode] = useState(false); // 폴더별로 수정 모드를 관리하는 상태
+    const [editMode, setEditMode] = useState(false);
     const [titleInput, setTitleInput] = useState<string>(props.text);
 
     const handleFolderNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -53,12 +51,16 @@ function ProjectFolder(props: {
         // 사진 업로드 로직 구현
     };
 
+    const handleFolderClick = () => {
+        navigate(`/project-detail/${titleInput}`);
+    };
+
     return (
         <>
-        <div className='flex flex-1 bg-white rounded-lg ml-1 mr-1 shadow-inner outline outline-1 outline-neutral-200 hover:outline-blue-500/50' onClick={props.onClick}>
+        <div className='flex flex-1 bg-white rounded-lg ml-1 mr-1 shadow-inner outline outline-1 outline-neutral-200 hover:outline-blue-500/50'>
             <figure className='relative w-full h-full flex flex-col'>
             <div className="relative">
-                <img className='h-48 rounded-lg rounded-b-none object-cover w-full' src={props.src} alt="Project Folder" />
+                <img className='h-48 rounded-lg rounded-b-none cursor-pointer object-cover w-full' src={props.src} alt="Project Folder" onClick={handleFolderClick}/>
                 <div className="absolute top-2 right-2 flex">
                     <MdDelete className="text-white bg-black/50 rounded-full p-1 cursor-pointer text-xl" onClick={handleDeleteFolder} />
                     <MdPhoto className="text-white bg-black/50 rounded-full p-1 ml-2 cursor-pointer text-xl" onClick={handleUploadPhoto} />
@@ -79,13 +81,9 @@ function ProjectFolder(props: {
                         className={`absolute right-4 cursor-pointer ${
                         editMode ? "text-blue-700" : ""
                         }`}
-                        //onClick={handleEditToggle}
                         onClick={() => {
-                            if (editMode) {
-                                handleFolderNameSubmit(); // 수정 완료 버튼 클릭 시 수정 내용을 부모 컴포넌트로 전달
-                            } else {
-                                handleEditToggle(); // 수정 모드 토글
-                            }
+                            handleFolderNameSubmit();
+                            handleEditToggle();
                         }}
                     />
                 </div>
