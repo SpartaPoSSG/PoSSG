@@ -4,6 +4,7 @@ import { BiUpload } from "react-icons/bi";
 import Footer from '../components/Footer';
 import ProjectPreview from '../components/ProjectPreview';
 import { Document, Page, pdfjs } from "react-pdf";
+import ProjectFile from '../components/ProjectFile';
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 
@@ -11,7 +12,8 @@ const ProjectDetail = () => {
   const { folderName } = useParams<{ folderName: string }>();
   const { sector } = useParams<{ sector: string }>();
   const [isActive, setActive] = useState<boolean>(false);
-  const [filePreviews, setFilePreviews] = useState<{ file: File; preview: string }[]>([]);
+  const [filePreviews, setFilePreviews] = useState<{ file: File; preview: string, name: string }[]>([]);
+  const [fileFinals, setFileFinals] = useState<{ file: File; preview: string, name: string }[]>([]);
   
   const Logo = () => (
     <svg className="w-24 h-24 mt-5 pointer-events-none" x="0px" y="0px" viewBox="0 0 24 24">
@@ -45,7 +47,9 @@ const ProjectDetail = () => {
       const reader = new FileReader();
       reader.onload = (e) => {
         if (e.target && e.target.result) {
-          setFilePreviews(prevFilePreviews => [...prevFilePreviews, { file, preview: e.target?.result as string }]);
+          const modifiedName = file.name.replace(/_/g, ' '); // _를 공백으로 대체
+          console.log(modifiedName);
+          setFilePreviews(prevFilePreviews => [...prevFilePreviews, { file, preview: e.target?.result as string, name: modifiedName }]);
         }
       };
       reader.readAsDataURL(file);
@@ -61,12 +65,20 @@ const ProjectDetail = () => {
         const reader = new FileReader();
         reader.onload = (e) => {
           if (e.target && e.target.result) {
-            setFilePreviews(prevFilePreviews => [...prevFilePreviews, { file, preview: e.target?.result as string }]);
+            const modifiedName = file.name.replace(/_/g, ' '); // _를 공백으로 대체
+            setFilePreviews(prevFilePreviews => [...prevFilePreviews, { file, preview: e.target?.result as string, name: modifiedName }]);
           }
         };
         reader.readAsDataURL(file);
       });
     }
+  };
+
+  const handleUploadButtonClick = () => {
+    // filePreviews 배열에 있는 데이터를 fileFinals 배열에 추가하고 비우기
+    setFileFinals(prevFileFinals => [...prevFileFinals, ...filePreviews]);
+    setFilePreviews([]); // filePreviews 배열 비우기
+    setActive(false);
   };
   
 
@@ -95,13 +107,15 @@ const ProjectDetail = () => {
                   </div>
                   <div className='mt-3'>
                     <div className='grid grid-cols-1 md:grid-cols-5 gap-2 ml-3 mr-3 mt-5 mb-5'>
-                      <div className='flex flex-col w-full pb-1'>
                         {/* 자료 반환한 거 띄우는 위치 */}
-                        <ProjectPreview
-                          name={'example'}
-                          src={''}
-                        />
-                      </div>
+                        {fileFinals.map((fileFinals, index) => (
+                          <div key={index} className='flex flex-col w-full pb-1'>
+                            <ProjectFile
+                              name={fileFinals.name}
+                              src={fileFinals.preview}
+                            />
+                          </div>
+                        ))}
                     </div>
                   </div>
                   <div className='mt-3'>
@@ -149,7 +163,7 @@ const ProjectDetail = () => {
                                 </Document>
                               )}
                               <ProjectPreview
-                                name={filePreviews.file.name}
+                                name={filePreviews.name}
                                 src={filePreviews.preview}
                               />
                             </div>
@@ -157,7 +171,8 @@ const ProjectDetail = () => {
                         </div>
                         <button
                             type="submit"
-                            className="bg-blue-900 text-white text-s font-PretendardVariable font-normal rounded-md py-2 px-10 mb-3 transition duration-200 ease-in-out cursor-pointer">
+                            className="bg-blue-900 text-white text-s font-PretendardVariable font-normal rounded-md py-2 px-10 mb-3 transition duration-200 ease-in-out cursor-pointer"
+                            onClick={handleUploadButtonClick}>
                             업로드하기
                         </button>
                         </>
