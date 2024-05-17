@@ -82,3 +82,44 @@ class CreateUserFolder(APIView):
                 return JsonResponse({"message": "Folder does not exist"}, status=404)
         else:
             return JsonResponse({"message": "Invalid is_Exist value"}, status=400)
+
+
+        
+class ImageUploadView(APIView):
+    def post(self, request, *args, **kwargs):
+        token = request.headers.get('Authorization').split()[1]
+        decoded = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
+        username = decoded['username']
+        
+        file = request.FILES['image']
+        original_filename = file.name
+        
+        group_folder, image_filename = original_filename.split('/', 1)
+        new_filename = f"thumbnail{os.path.splitext(file.name)[1]}"
+        custom_path = os.path.join('/home/honglee0317/possg/backend/folders', username, group_folder, image_filename, new_filename)
+        
+        custom_storage = CustomFileSystemStorage()
+        custom_storage.save(custom_path, file)
+        
+        image_instance = Image(image=custom_path)
+        image_instance.save()
+
+        return Response({"message": "Image uploaded successfully", "path": custom_path}, status=status.HTTP_201_CREATED)
+    
+
+
+
+
+
+from .utils import get_user_folders_info
+
+class UserFoldersInfoView(APIView):
+    def get(self, request, *args, **kwargs):
+        token = request.headers.get('Authorization').split()[1]
+        decoded = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
+        username = decoded['username']
+        
+        base_path = settings.CUSTOM_MEDIA_ROOT
+        folders_info = get_user_folders_info(base_path, username)
+        
+        return Response({"folders": folders_info}, status=status.HTTP_200_OK)

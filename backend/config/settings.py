@@ -182,3 +182,16 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+
+
+
+##### 이미지 저장 ######
+import os
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# 커스텀 경로 설정
+CUSTOM_MEDIA_ROOT = '/home/honglee0317/possg/backend/folders'
