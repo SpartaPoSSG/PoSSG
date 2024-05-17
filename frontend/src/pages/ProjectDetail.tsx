@@ -53,39 +53,26 @@ const ProjectDetail = () => {
   const handleDrop = (e: React.DragEvent<HTMLLabelElement>) => {
     e.preventDefault();
     setActive(false);
+    uploadFiles(Array.from(e.dataTransfer.files));
+  };
 
-    const files = e.dataTransfer.files;
-    
-    Array.from(files).forEach(file => {
-      // 파일의 미리보기 이미지 설정
+  const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      uploadFiles(Array.from(e.target.files));
+    }
+  };
+
+  const uploadFiles = (files: File[]) => {
+    files.forEach(file => {
       const reader = new FileReader();
       reader.onload = (e) => {
         if (e.target && e.target.result) {
           const modifiedName = file.name.replace(/_/g, ' '); // _를 공백으로 대체
-          console.log(modifiedName);
           setFilePreviews(prevFilePreviews => [...prevFilePreviews, { file, preview: e.target?.result as string, name: modifiedName }]);
         }
       };
       reader.readAsDataURL(file);
     });
-  };
-
-  const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      const files = Array.from(e.target.files);
-
-      // 각 파일의 미리보기 이미지 설정
-      files.forEach(file => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          if (e.target && e.target.result) {
-            const modifiedName = file.name.replace(/_/g, ' '); // _를 공백으로 대체
-            setFilePreviews(prevFilePreviews => [...prevFilePreviews, { file, preview: e.target?.result as string, name: modifiedName }]);
-          }
-        };
-        reader.readAsDataURL(file);
-      });
-    }
   };
 
   const handleUploadButtonClick = () => {
@@ -97,7 +84,7 @@ const ProjectDetail = () => {
 
       // filePreviews 배열에 있는 데이터를 fileFinals 배열에 추가하고 비우기
       setFileFinals(prevFileFinals => [...prevFileFinals, ...filePreviews]);
-      setFilePreviews([]); // filePreviews 배열 비우기
+      setFilePreviews([]);
     }
   };
 
@@ -122,7 +109,6 @@ const ProjectDetail = () => {
 
     updateContainerWidth();
     window.addEventListener('resize', updateContainerWidth);
-
     // 팝업창 닫기 이벤트
     document.addEventListener('mousedown', handleOutsideClick);
 
@@ -141,25 +127,13 @@ const ProjectDetail = () => {
                 <div id="content-container" className='mx-auto md:w-[80%]'>
                   <div className='flex justify-between items-center pt-12 pb-2 border-b border-gray-500'>
                       <p className='text-xl font-PretendardVariable font-semibold ml-3'>{sector}&nbsp;/&nbsp;{folderName}</p>
-                      {isExist ? (
-                        <>
-                        <button
-                          type="submit"
-                          className="bg-blue-900 text-white text-xs font-PretendardVariable font-normal rounded-md py-2 px-5 mr-3 transition duration-200 ease-in-out cursor-pointer"
-                          onClick={handlePopUpButtonClick}>
-                          파일 업로드
-                        </button>  
-                        </>
-                      ) : (
-                        <>
-                        <button
-                          type="submit"
-                          className="bg-blue-900 text-white text-xs font-PretendardVariable font-normal rounded-md py-2 px-5 mr-3 transition duration-200 ease-in-out cursor-pointer"
-                          onClick={handleUploadButtonClick}>
-                          업로드하기
-                        </button>    
-                        </>
-                      )}
+                      <button
+                        type="submit"
+                        className="bg-blue-900 text-white text-xs font-PretendardVariable font-normal rounded-md py-2 px-5 mr-3 transition duration-200 ease-in-out cursor-pointer"
+                        onClick={handlePopUpButtonClick}
+                      >
+                        {"파일 업로드"}
+                      </button>
                   </div>
                   <div className='mt-3'>
                     <div className='grid grid-cols-1 md:grid-cols-5 gap-2 ml-3 mr-3 mt-5 mb-5'>
@@ -174,13 +148,10 @@ const ProjectDetail = () => {
                         ))}
                     </div>
                   </div>
-                  {isExist ? (
-                    <></>
-                  ) : (
-                    <>
+                  {!isExist && (
                     <div className='mt-3'>
                       <label
-                        className={`w-300 h-150 mx-auto bg-white rounded-lg outline-dashed outline-2 outline-gray-300 hover:outline-gray-500 p-70 flex flex-col justify-center items-center cursor-pointer${isActive ? ' bg-efeef3 border-111' : ''}`}
+                        className={`bg-white rounded-lg outline-dashed outline-2 outline-gray-300 hover:outline-gray-500 p-70 flex flex-col justify-center items-center cursor-pointer${isActive ? ' bg-efeef3 border-111' : ''}`}
                         onDragEnter={handleDragStart}
                         onDragOver={handleDragOver}
                         onDragLeave={handleDragEnd}
@@ -239,10 +210,9 @@ const ProjectDetail = () => {
                         )}
                         <input type="file" className="file hidden" accept='.png, .jpeg, .pdf' onChange={handleUpload} multiple />
                       </label>
+                      <button className='w-full bg-blue-900 text-white text-xs font-PretendardVariable font-normal rounded-md py-3 mt-4 transition duration-200 ease-in-out cursor-pointer' onClick={handleUploadButtonClick}>업로드 하기</button>
                     </div>
-                    </>
                   )}
-
                 </div>
               </div>
           </div>
@@ -251,7 +221,7 @@ const ProjectDetail = () => {
               <div className="fixed top-0 left-0 w-full h-full bg-gray-500 bg-opacity-60 flex items-center justify-center">
                 {/* 모달 백그라운드 */}
               </div>
-              <div ref={popupRef} className={`mx-auto h-3/7 bg-white rounded-lg border-1 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 items-center justify-center z-1`} style={{ width: containerWidth }}>
+              <div ref={popupRef} className={`mx-auto h-3/7 bg-white rounded-lg border-1 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 items-center justify-center mt-4 z-1`} style={{ width: containerWidth }}>
                 <div className='m-4'>
                   <label
                     className={`bg-white rounded-lg outline-dashed outline-2 outline-gray-300 hover:outline-gray-500 p-70 flex flex-col justify-center items-center cursor-pointer${isActive ? ' bg-efeef3 border-111' : ''}`}
