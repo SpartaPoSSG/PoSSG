@@ -1,24 +1,25 @@
 import React, { useState } from 'react';
 import { MdDelete } from "react-icons/md";
+import { CustomFlowbiteTheme, TextInput } from 'flowbite-react';
 
-function ProjectPreview(props: {
-    name: string; src: string; onDelete: () => void;
+function ProjectFile(props: {
+    name: string; src: string;
 }) {
+    const token = localStorage.getItem('token');
     const [titleInput, setTitleInput] = useState<string>(props.name);
 
     const handleDeleteFile = async () => {
-        props.onDelete();
+        // 파일 삭제
+        if (token) {
+        }
     };
 
     return (
         <>
-        <div
-            className='flex flex-1 bg-white rounded-lg ml-1 mr-1 shadow-inner outline outline-1 outline-neutral-200 hover:outline-blue-500/50'
-            draggable={false}
-        >
-            <figure className='relative w-48 h-full flex flex-col' draggable={false}>
-            <div className="relative" draggable={false}>
-                <img className='h-48 rounded-lg rounded-b-none cursor-pointer object-contain w-full' src={props.src} alt="Project Folder" draggable={false}/>
+        <div className='flex flex-1 bg-white rounded-lg ml-1 mr-1 shadow-inner outline outline-1 outline-neutral-200 hover:outline-blue-500/50'>
+            <figure className='relative w-48 h-full flex flex-col'>
+            <div className="relative">
+                <img className='h-48 rounded-lg rounded-b-none cursor-pointer object-contain w-full' src={props.src} alt="Project Folder"/>
                 <div className="absolute top-2 right-2 flex">
                     <MdDelete className="text-white bg-black/50 rounded-full p-1 cursor-pointer text-xl" onClick={handleDeleteFile} />
                 </div>
@@ -31,4 +32,4 @@ function ProjectPreview(props: {
     );
 }
 
-export default ProjectPreview;
+export default ProjectFile;
