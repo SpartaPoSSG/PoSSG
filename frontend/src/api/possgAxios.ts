@@ -1,5 +1,5 @@
 import axios, { AxiosResponse, isAxiosError } from "axios";
-import { EmailResponse, Folder, FolderResponse, LoginResponse, RegisterResponse, User, Users } from "../interfaces/Interfaces";
+import { EmailResponse, Folder, FolderResponse, LoginResponse, RegisterResponse, User, Users,UploadResponse, MyFolders } from "../interfaces/Interfaces";
 
 const possgAxios = axios.create({
 baseURL: "http://35.192.203.252:8000/api",
@@ -127,6 +127,51 @@ export const manageFolder = async (
         return response;
     } catch (error) {
         if(isAxiosError<FolderResponse>(error)) {
+            console.log(`Error: ${error.response?.status} ${error.message}`);
+            return null;
+        } else {
+            return null;
+        }
+    }
+};
+
+// 썸네일 관련 API함수
+export const uploadThumbnail = async (
+    token: string,
+    formData: FormData
+): Promise<AxiosResponse<UploadResponse, any> | null> => {
+    try {
+        const response = await possgAxios.post(
+            "community/thumbnail-upload",
+            formData, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+        return response;
+    } catch (error) {
+        if(isAxiosError<UploadResponse>(error)) {
+            console.log(`Error: ${error.response?.status} ${error.message}`);
+            return null;
+        } else {
+            return null;
+        }
+    }
+};
+
+// 내 폴더 정보 반환
+export const MyFolder = async (
+    token: string
+): Promise<AxiosResponse<MyFolders, any> | null> => {
+    try {
+        const response = await possgAxios.get(
+            "community/folder",
+            { headers: { Authorization: `Bearer ${token}` }}
+        );
+        return response;
+    } catch (error) {
+        if(isAxiosError<MyFolders>(error)) {
             console.log(`Error: ${error.response?.status} ${error.message}`);
             return null;
         } else {
