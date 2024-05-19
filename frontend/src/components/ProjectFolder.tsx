@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { MdEdit,MdDelete, MdPhoto } from "react-icons/md";
 import { CustomFlowbiteTheme, TextInput } from 'flowbite-react';
-import { manageFolder } from '../api/possgAxios';
+import { manageFolder ,uploadThumbnail} from '../api/possgAxios';
 import { useNavigate } from 'react-router-dom';
 
 function ProjectFolder(props: {
@@ -11,6 +11,8 @@ function ProjectFolder(props: {
     const token = localStorage.getItem('token');
     const [editMode, setEditMode] = useState(false);
     const [titleInput, setTitleInput] = useState<string>(props.text);
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [previewSrc, setPreviewSrc] = useState<string>(props.src);
 
     const handleFolderNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setTitleInput(e.target.value);
@@ -46,10 +48,52 @@ function ProjectFolder(props: {
             const folderResult = await manageFolder(token, {sector: props.sector, title: titleInput, new_title: "", is_Exist: 2});
         }
     };
+//서버에 올리는 용도(썸네일)
+const handleUploadPhoto = async (file: File) => {
+    if (token) {
+        const formData = new FormData();
+        formData.append('sector', props.sector);
+        formData.append('folderName', titleInput);
+        formData.append('file', file);
+        
 
-    const handleUploadPhoto = () => {
-        // 사진 업로드 로직 구현
+        console.log('Sending form data:', {
+            sector: props.sector,
+            folderName: titleInput,
+            file: file.name
+        });
+
+        try {
+            const response = await uploadThumbnail(token, formData);
+            console.log('Response from server:', response);
+            if (response?.data.message === 'Upload success') {
+                setPreviewSrc(URL.createObjectURL(file));
+            }
+        } catch (error) {
+            console.error('Error uploading thumbnail:', error);
+        }
+    }
+};
+
+
+//파일 선택하고 업로드 (프론트앤드 쪽)
+    const handleFileUpload = () => {
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.accept = 'image/*';
+        fileInput.onchange = async (e) => {
+            const file = (e.target as HTMLInputElement).files?.[0];
+            if (file) {
+                setSelectedFile(file);
+                setPreviewSrc(URL.createObjectURL(file));
+
+                await handleUploadPhoto(file); // handleUploadPhoto 호출
+            }
+        };
+        fileInput.click();
     };
+
+
 
     const handleFolderClick = () => {
         navigate(`/project-detail/${props.sector}/${titleInput}`);
@@ -60,10 +104,10 @@ function ProjectFolder(props: {
         <div className='flex flex-1 bg-white rounded-lg ml-1 mr-1 shadow-inner outline outline-1 outline-neutral-200 hover:outline-blue-500/50'>
             <figure className='relative w-full h-full flex flex-col'>
             <div className="relative">
-                <img className='h-48 rounded-lg rounded-b-none cursor-pointer object-cover w-full' src={props.src} alt="Project Folder" onClick={handleFolderClick}/>
+                <img className='h-48 rounded-lg rounded-b-none cursor-pointer object-cover w-full' src={previewSrc} alt="Project Folder" onClick={handleFolderClick}/>
                 <div className="absolute top-2 right-2 flex">
                     <MdDelete className="text-white bg-black/50 rounded-full p-1 cursor-pointer text-xl" onClick={handleDeleteFolder} />
-                    <MdPhoto className="text-white bg-black/50 rounded-full p-1 ml-2 cursor-pointer text-xl" onClick={handleUploadPhoto} />
+                    <MdPhoto className="text-white bg-black/50 rounded-full p-1 ml-2 cursor-pointer text-xl" onClick={handleFileUpload} />
                 </div>
             </div>
                 <div className='pt-2 pb-2 pl-3 pr-3 flex items-center'>

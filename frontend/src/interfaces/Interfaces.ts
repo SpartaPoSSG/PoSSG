@@ -33,3 +33,8 @@ export interface Folder {
 export interface FolderResponse {
     message: string;
 }
+
+//썸네일
+export interface UploadResponse {
+    message: string;
+}
