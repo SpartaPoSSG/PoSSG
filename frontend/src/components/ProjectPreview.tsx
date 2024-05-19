@@ -1,17 +1,13 @@
 import React, { useState } from 'react';
 import { MdDelete } from "react-icons/md";
-import { CustomFlowbiteTheme, TextInput } from 'flowbite-react';
 
 function ProjectPreview(props: {
-    name: string; src: string;
+    name: string; src: string; onDelete: () => void;
 }) {
-    const token = localStorage.getItem('token');
     const [titleInput, setTitleInput] = useState<string>(props.name);
 
     const handleDeleteFile = async () => {
-        // 파일 삭제
-        if (token) {
-        }
+        props.onDelete();
     };
 
     return (

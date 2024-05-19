@@ -78,6 +78,10 @@ const ProjectDetail = () => {
     });
   };
 
+  const handlePreviewDelete = (index: number) => {
+    setFilePreviews(prevFilePreviews => prevFilePreviews.filter((_, i) => i !== index));
+  };
+
   const handleUploadButtonClick = () => {
     setShowPopup(false);
 
@@ -200,6 +204,7 @@ const ProjectDetail = () => {
                                 <ProjectPreview
                                   name={filePreviews.name}
                                   src={filePreviews.preview}
+                                  onDelete={() => handlePreviewDelete(index)}
                                 />
                               </div>
                             ))}
@@ -273,6 +278,7 @@ const ProjectDetail = () => {
                             <ProjectPreview
                               name={filePreviews.name}
                               src={filePreviews.preview}
+                              onDelete={() => handlePreviewDelete(index)}
                             />
                           </div>
                         ))}
