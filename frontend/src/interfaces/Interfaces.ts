@@ -34,7 +34,13 @@ export interface FolderResponse {
     message: string;
 }
 
-//썸네일
 export interface UploadResponse {
     message: string;
 }
+
+export interface MyFolder {
+    sector: string;
+    title: string;
+}
+
+export interface MyFolders extends Array<MyFolder> {}
