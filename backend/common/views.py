@@ -202,3 +202,18 @@ class UserDetailView(APIView):
             return Response({'error': 'Error in token decoding: ' + str(e)}, status=status.HTTP_401_UNAUTHORIZED)
         except AuthenticationFailed as e:
             return Response({'error': str(e)}, status=status.HTTP_401_UNAUTHORIZED)
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+
+class ThumbnailUploadAPIView(APIView):
+    def post(self, request):
+        # 파일 업로드 처리 로직
+
+        # 성공적으로 파일 업로드가 완료되면 해당 응답 반환
+        image_url = "http://35.192.203.252:8000/media/community/thumbnail/filename.jpg"
+        response_data = {
+            "message": "이미지가 성공적으로 업로드되었습니다.",
+            "image_url": image_url
+        }
+        return Response(response_data, status=status.HTTP_200_OK)

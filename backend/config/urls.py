@@ -16,10 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-
+from possg.views import CreateUserFolder, ImageUploadView, UserFoldersInfoView, FolderView
 urlpatterns = [
-    path('api/admin/', admin.site.urls),
-    path('api/members/', include('common.urls')),
-    path('api/community/', include('possg.urls')),
+    path('admin/', admin.site.urls),
+    path('api/community/folder', FolderView.as_view(), name='folder-view'),
+    path('api/create-folder/', CreateUserFolder.as_view(), name='create-user-folder'),
+    path('api/upload-image/', ImageUploadView.as_view(), name='image-upload'),
+    path('api/user-folders/', UserFoldersInfoView.as_view(), name='user-folders-info'),
     
 ]
