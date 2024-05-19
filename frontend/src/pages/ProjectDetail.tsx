@@ -53,7 +53,10 @@ const ProjectDetail = () => {
   const handleDrop = (e: React.DragEvent<HTMLLabelElement>) => {
     e.preventDefault();
     setActive(false);
-    uploadFiles(Array.from(e.dataTransfer.files));
+    const files = Array.from(e.dataTransfer.files).filter(file =>
+      file.type === 'application/pdf' || file.type === 'image/jpeg' || file.type === 'image/png'
+    );
+    uploadFiles(files);
   };
 
   const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -95,6 +98,7 @@ const ProjectDetail = () => {
   const handleOutsideClick = (event: MouseEvent) => {
     if (popupRef.current && !popupRef.current.contains(event.target as Node)) {
       setShowPopup(false);
+      setFilePreviews([]);
     }
   };
 
