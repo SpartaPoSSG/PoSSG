@@ -16,12 +16,22 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from possg.views import CreateUserFolder, ImageUploadView, UserFoldersInfoView, FolderView
+#from possg.views import CreateUserFolder, ImageUploadView, UserFoldersInfoView, FolderView
+
+
+from django.conf.urls.static import static
+from django.conf import settings
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/community/folder', FolderView.as_view(), name='folder-view'),
-    path('api/create-folder/', CreateUserFolder.as_view(), name='create-user-folder'),
-    path('api/upload-image/', ImageUploadView.as_view(), name='image-upload'),
-    path('api/user-folders/', UserFoldersInfoView.as_view(), name='user-folders-info'),
+    path('api/members/', include('common.urls')),
+    path('api/community/', include('possg.urls')),
+    #path('api/community/folder', FolderView.as_view(), name='folder-view'),
+    #path('api/create-folder/', CreateUserFolder.as_view(), name='create-user-folder'),
+    #path('api/upload-image/', ImageUploadView.as_view(), name='image-upload'),
+    #path('api/user-folders/', UserFoldersInfoView.as_view(), name='user-folders-info'),
     
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
