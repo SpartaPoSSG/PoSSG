@@ -1,8 +1,8 @@
-import React, { useState, FormEvent } from 'react';
+import React, { useState, useEffect,FormEvent } from 'react';
 import ProjectFolder from '../components/ProjectFolder';
 import { Sector } from '../interfaces/Interfaces';
 import { useNavigate } from 'react-router-dom';
-import { manageFolder } from '../api/possgAxios';
+import { transformFolders, getMyFolder, manageFolder } from '../api/possgAxios';
 import InputForm from '../components/InputForm';
 
 
@@ -26,6 +26,19 @@ const Home = () => {
     });
 
     const [selectedFolder, setSelectedFolder] = useState<string | null>(null); // 선택된 폴더명 상태 추가
+
+    useEffect(() => {
+        const fetchFolders = async () => {
+            if (token) {
+                const folderResponse = await getMyFolder(token);
+                if (folderResponse && folderResponse.data) {
+                    const transformedFolders = transformFolders(folderResponse.data);
+                    setFolders(transformedFolders);
+                }
+            }
+        };
+        fetchFolders();
+    }, [token]);
 
     const handleMakeFolder = async (e: FormEvent, sector: string) => {
         e.preventDefault();

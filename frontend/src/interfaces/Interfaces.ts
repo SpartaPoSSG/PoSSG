@@ -43,4 +43,4 @@ export interface MyFolder {
     title: string;
 }
 
-export interface MyFolders extends Array<MyFolder> {}
+ export interface MyFolders extends Array<MyFolder> {}
