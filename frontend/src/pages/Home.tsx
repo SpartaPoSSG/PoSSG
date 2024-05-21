@@ -44,14 +44,27 @@ const Home = () => {
         e.preventDefault();
         const newFolderName = newFolderNames[sector];
         if (newFolderName.trim() !== '') {
+            // setFolders(prevFolders => {
+            //     return prevFolders.map(item => {
+            //         if (item.name === sector) {
+            //             return { ...item, folders: [...item.folders, newFolderName] };
+            //         }
+            //         return item;
+            //     });
+            // });
+
+            
+            //sector에 썸네일 추가해서 바꿈
             setFolders(prevFolders => {
                 return prevFolders.map(item => {
                     if (item.name === sector) {
-                        return { ...item, folders: [...item.folders, newFolderName] };
+                        return { ...item, folders: [...item.folders, { title: newFolderName, src: 'img/example-img.png' }] }; // src 값은 초기화해도 될 듯합니다.
                     }
                     return item;
                 });
             });
+            
+            
             setNewFolderNames(prevNames => ({ ...prevNames, [sector]: '' }));
 
             // 폴더 생성
@@ -98,8 +111,8 @@ const Home = () => {
                                         <div key={index} className='flex flex-col w-full p-2'>
                                             <ProjectFolder
                                                 sector={name}
-                                                src={'img/example-img.png'}
-                                                text={folder}
+                                                src={'folder.src'}
+                                                text={folder.title}
                                                 // onClick={() => handleFolderClick(folder)}
                                             />
                                         </div>
@@ -115,3 +128,4 @@ const Home = () => {
 };
 
 export default Home;
+

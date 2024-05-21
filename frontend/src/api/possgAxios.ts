@@ -181,15 +181,14 @@ export const getMyFolder = async (
     }
 };
 
-//MyFoler 데이터 배열 Sector 데이터 배열로 변환하는 함수
 export const transformFolders = (folders: MyFolder[]): Sector[] => {
-    const sectorMap: { [key: string]: string[] } = {};
+    const sectorMap: { [key: string]: { title: string; src: string }[] } = {};
 
     folders.forEach(folder => {
         if (!sectorMap[folder.sector]) {
             sectorMap[folder.sector] = [];
         }
-        sectorMap[folder.sector].push(folder.title);
+        sectorMap[folder.sector].push({ title: folder.title, src: folder.src }); // 썸네일 URL을 포함한 폴더 정보를 추가
     });
 
     return Object.keys(sectorMap).map(sector => ({
@@ -197,3 +196,4 @@ export const transformFolders = (folders: MyFolder[]): Sector[] => {
         folders: sectorMap[sector]
     }));
 };
+

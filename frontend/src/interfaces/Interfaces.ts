@@ -18,9 +18,14 @@ export interface User {
 
 export interface Users extends Array<User> {}
 
+// export interface Sector {
+//     name: string;
+//     folders: string[];
+// }
+
 export interface Sector {
     name: string;
-    folders: string[];
+    folders: { title: string, src: string }[];
 }
 
 export interface Folder {
@@ -41,6 +46,7 @@ export interface UploadResponse {
 export interface MyFolder {
     sector: string;
     title: string;
+    src: string; // 썸네일 URL 추가
 }
 
- export interface MyFolders extends Array<MyFolder> {}
+export interface MyFolders extends Array<MyFolder> {}
