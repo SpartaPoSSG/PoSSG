@@ -1,5 +1,5 @@
 import axios, { AxiosResponse, isAxiosError } from "axios";
-import { EmailResponse, Folder, FolderResponse, LoginResponse, RegisterResponse, User, Users,UploadResponse, MyFolders,MyFolder  ,Sector} from "../interfaces/Interfaces";
+import { EmailResponse, Folder, LoginResponse, User, Users, MyFolders, MyFolder, Sector, SuccessResponse} from "../interfaces/Interfaces";
 
 
 const possgAxios = axios.create({
@@ -11,7 +11,7 @@ export const register = async (
     email : string,
     password : string,
     nickname : string
-): Promise<AxiosResponse<RegisterResponse, any> | null> => {
+): Promise<AxiosResponse<SuccessResponse, any> | null> => {
     try {
         const response = await possgAxios.post(
             "members/signup",
@@ -23,7 +23,7 @@ export const register = async (
         );
         return response;
     } catch (error) {
-        if(isAxiosError<RegisterResponse>(error)) {
+        if(isAxiosError<SuccessResponse>(error)) {
             console.log(`Error: ${error.response?.status} ${error.message}`);
             return null;
         } else {
@@ -118,7 +118,7 @@ export const user = async (
 export const manageFolder = async (
     token: string,
     folderData: Folder
-): Promise<AxiosResponse<FolderResponse, any> | null> => {
+): Promise<AxiosResponse<SuccessResponse, any> | null> => {
     try {
         const response = await possgAxios.post(
             "community/create",
@@ -127,7 +127,7 @@ export const manageFolder = async (
         );
         return response;
     } catch (error) {
-        if(isAxiosError<FolderResponse>(error)) {
+        if(isAxiosError<SuccessResponse>(error)) {
             console.log(`Error: ${error.response?.status} ${error.message}`);
             return null;
         } else {
@@ -140,7 +140,7 @@ export const manageFolder = async (
 export const uploadThumbnail = async (
     token: string,
     formData: FormData
-): Promise<AxiosResponse<UploadResponse, any> | null> => {
+): Promise<AxiosResponse<SuccessResponse, any> | null> => {
     try {
         const response = await possgAxios.post(
             "community/thumbnail-upload",
@@ -152,7 +152,7 @@ export const uploadThumbnail = async (
         });
         return response;
     } catch (error) {
-        if(isAxiosError<UploadResponse>(error)) {
+        if(isAxiosError<SuccessResponse>(error)) {
             console.log(`Error: ${error.response?.status} ${error.message}`);
             return null;
         } else {
