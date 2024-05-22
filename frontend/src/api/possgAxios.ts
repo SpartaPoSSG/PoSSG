@@ -1,5 +1,6 @@
 import axios, { AxiosResponse, isAxiosError } from "axios";
-import { EmailResponse, Folder, FolderResponse, LoginResponse, RegisterResponse, User, Users,UploadResponse, MyFolders } from "../interfaces/Interfaces";
+import { EmailResponse, Folder, FolderResponse, LoginResponse, RegisterResponse, User, Users,UploadResponse, MyFolders,MyFolder  ,Sector} from "../interfaces/Interfaces";
+
 
 const possgAxios = axios.create({
 baseURL: "http://35.192.203.252:8000/api",
@@ -161,7 +162,7 @@ export const uploadThumbnail = async (
 };
 
 // 내 폴더 정보 반환
-export const MyFolder = async (
+export const getMyFolder = async (
     token: string
 ): Promise<AxiosResponse<MyFolders, any> | null> => {
     try {
@@ -179,3 +180,20 @@ export const MyFolder = async (
         }
     }
 };
+
+export const transformFolders = (folders: MyFolder[]): Sector[] => {
+    const sectorMap: { [key: string]: { title: string; src: string }[] } = {};
+
+    folders.forEach(folder => {
+        if (!sectorMap[folder.sector]) {
+            sectorMap[folder.sector] = [];
+        }
+        sectorMap[folder.sector].push({ title: folder.title, src: folder.src }); // 썸네일 URL을 포함한 폴더 정보를 추가
+    });
+
+    return Object.keys(sectorMap).map(sector => ({
+        name: sector,
+        folders: sectorMap[sector]
+    }));
+};
+
