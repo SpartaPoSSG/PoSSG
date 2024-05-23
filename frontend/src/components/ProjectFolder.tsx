@@ -3,16 +3,19 @@ import { MdEdit,MdDelete, MdPhoto } from "react-icons/md";
 import { CustomFlowbiteTheme, TextInput } from 'flowbite-react';
 import { manageFolder ,uploadThumbnail} from '../api/possgAxios';
 import { useNavigate } from 'react-router-dom';
+import { useRecoilState } from 'recoil';
+import { selectedFolderState } from '../atom';
 
 function ProjectFolder(props: {
-    sector: string; text: string; src: string;
+    sector: string; title: string; src: string;
 }) {
     const navigate = useNavigate(); 
     const token = localStorage.getItem('token');
     const [editMode, setEditMode] = useState(false);
-    const [titleInput, setTitleInput] = useState<string>(props.text);
+    const [titleInput, setTitleInput] = useState<string>(props.title);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [previewSrc, setPreviewSrc] = useState<string>(props.src);
+    const [folderInfo, setFolderInfo] = useRecoilState(selectedFolderState);
 
     const handleFolderNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setTitleInput(e.target.value);
@@ -36,7 +39,7 @@ function ProjectFolder(props: {
     const handleFolderNameSubmit = async () => {
         // 폴더명 수정 후 백엔드에 수정된 내용 전달
         if (token) {
-            const folderResult = await manageFolder(token, {sector: props.sector, title: props.text, new_title: titleInput, is_Exist: 1});
+            const folderResult = await manageFolder(token, {sector: props.sector, title: props.title, new_title: titleInput, is_Exist: 1});
         }
 
         setEditMode(false); // 수정 모드 종료
@@ -96,6 +99,12 @@ const handleUploadPhoto = async (file: File) => {
 
 
     const handleFolderClick = () => {
+        const folderInfo = {
+            sector: props.sector,
+            title: titleInput,
+            src: props.src
+        };
+        setFolderInfo(folderInfo);
         navigate(`/project-detail/${props.sector}/${titleInput}`);
     };
 

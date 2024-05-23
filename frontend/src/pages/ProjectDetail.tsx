@@ -5,20 +5,26 @@ import Footer from '../components/Footer';
 import ProjectPreview from '../components/ProjectPreview';
 import { Document, Page, pdfjs } from "react-pdf";
 import ProjectFile from '../components/ProjectFile';
+import { getMyProjectFiles, uploadProjectFiles } from '../api/possgAxios';
+import { useRecoilState } from 'recoil';
+import { selectedFolderState } from '../atom';
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 
 const ProjectDetail = () => {
-  const { folderName } = useParams<{ folderName: string }>();
-  const { sector } = useParams<{ sector: string }>();
+  const { folderName } = useParams() as { folderName: string };
+  const { sector } = useParams() as { sector: string };
+  const [folderInfo, setFolderInfo] = useRecoilState(selectedFolderState);
   const [isActive, setActive] = useState<boolean>(false);
   const [isExist, setExist] = useState<boolean>(false);
   const [filePreviews, setFilePreviews] = useState<{ file: File; preview: string, name: string }[]>([]);
   const [fileFinals, setFileFinals] = useState<{ file: File; preview: string, name: string }[]>([]);
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const [containerWidth, setContainerWidth] = useState<number>(0);
+
   const popupRef = useRef<HTMLDivElement>(null);
-  
+  const token = localStorage.getItem('token');
+
   const Logo = () => (
     <svg className="w-24 h-24 mt-32 pointer-events-none" x="0px" y="0px" viewBox="0 0 24 24">
       <path fill="transparent" d="M0,0h24v24H0V0z" />
@@ -72,12 +78,24 @@ const ProjectDetail = () => {
     setFilePreviews(prevFilePreviews => prevFilePreviews.filter((_, i) => i !== index));
   };
 
-  const handleUploadButtonClick = () => {
-    setShowPopup(false);
-    setActive(false);
-    setExist(true);
-    setFileFinals(prevFileFinals => [...prevFileFinals, ...filePreviews]);
-    setFilePreviews([]);
+  const handleUploadButtonClick = async () => {
+    if (token) {
+      const formData = new FormData();
+      formData.append('sector', sector);
+      formData.append('folderName', folderName);
+      
+      filePreviews.forEach(({ file }) => {
+        formData.append('files', file);
+      });
+
+      await uploadProjectFiles(token, formData);
+
+      setShowPopup(false);
+      setActive(false);
+      setExist(true);
+      setFileFinals(prevFileFinals => [...prevFileFinals, ...filePreviews]);
+      setFilePreviews([]);
+    }
   };
 
   const handlePopUpButtonClick = () => {
@@ -90,6 +108,24 @@ const ProjectDetail = () => {
       setFilePreviews([]);
     }
   };
+
+  const fetchFiles = async () => {
+    if (token && folderInfo?.sector) {
+        const successResponse = await getMyProjectFiles(token, folderInfo?.sector, folderInfo?.title);
+        if (successResponse && successResponse.data) {
+          const files = successResponse.data.files.map(file => ({
+              file: file.file,
+              preview: file.src,
+              name: file.file.name.replace(/_/g, ' ')
+          }));
+          setFileFinals(files);
+        }
+    }
+  };
+
+  useEffect(() => {
+    fetchFiles();
+  }, [token]);
 
   useEffect(() => {
     const updateContainerWidth = () => {
@@ -125,7 +161,7 @@ const ProjectDetail = () => {
                         className="bg-blue-900 text-white text-xs font-PretendardVariable font-normal rounded-md py-2 px-5 mr-3 transition duration-200 ease-in-out cursor-pointer"
                         onClick={handlePopUpButtonClick}
                       >
-                        {"파일 업로드"}
+                      파일 업로드
                       </button>
                   </div>
                   <div className='mt-3'>
@@ -134,6 +170,7 @@ const ProjectDetail = () => {
                         {fileFinals.map((fileFinals, index) => (
                           <div key={index} className='flex flex-col w-full pb-1'>
                             <ProjectFile
+                              file_name={fileFinals.file.name}
                               name={fileFinals.name}
                               src={fileFinals.preview}
                             />
