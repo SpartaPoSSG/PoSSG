@@ -6,7 +6,6 @@ import { transformFolders, getMyFolder, manageFolder } from '../api/possgAxios';
 import InputForm from '../components/InputForm';
 
 
-
 const Home = () => {
     const navigate = useNavigate(); 
     const token = localStorage.getItem('token');
@@ -24,8 +23,6 @@ const Home = () => {
         '동아리': '',
         '교내활동': ''
     });
-
-    const [selectedFolder, setSelectedFolder] = useState<string | null>(null); // 선택된 폴더명 상태 추가
 
     useEffect(() => {
         const fetchFolders = async () => {
@@ -85,10 +82,6 @@ const Home = () => {
         }
     };
 
-    const handleFolderClick = (folderName: string) => {
-        setSelectedFolder(folderName);
-        navigate(`/project-detail/${folderName}`);
-    };
 
       return (
         <>
@@ -112,8 +105,7 @@ const Home = () => {
                                             <ProjectFolder
                                                 sector={name}
                                                 src={'folder.src'}
-                                                text={folder.title}
-                                                // onClick={() => handleFolderClick(folder)}
+                                                title={folder.title}
                                             />
                                         </div>
                                     ))}
@@ -128,4 +120,3 @@ const Home = () => {
 };
 
 export default Home;
-

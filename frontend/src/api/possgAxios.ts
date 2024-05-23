@@ -1,5 +1,5 @@
 import axios, { AxiosResponse, isAxiosError } from "axios";
-import { EmailResponse, Folder, LoginResponse, User, Users, MyFolders, MyFolder, Sector, SuccessResponse} from "../interfaces/Interfaces";
+import { EmailResponse, Folder, LoginResponse, User, Users, MyFolders, MyFolder, Sector, SuccessResponse, MyFolderDetail, MyFolderDetail2} from "../interfaces/Interfaces";
 
 
 const possgAxios = axios.create({
@@ -136,7 +136,7 @@ export const manageFolder = async (
     }
 };
 
-// 썸네일 관련 API함수
+// 썸네일 업로드
 export const uploadThumbnail = async (
     token: string,
     formData: FormData
@@ -197,3 +197,75 @@ export const transformFolders = (folders: MyFolder[]): Sector[] => {
     }));
 };
 
+// 자료 업로드
+export const uploadProjectFiles = async (
+    token: string,
+    formData: FormData
+): Promise<AxiosResponse<SuccessResponse, any> | null> => {
+    try {
+        const response = await possgAxios.post(
+            "project/upload",
+            formData, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+        return response;
+    } catch (error) {
+        if(isAxiosError<SuccessResponse>(error)) {
+            console.log(`Error: ${error.response?.status} ${error.message}`);
+            return null;
+        } else {
+            return null;
+        }
+    }
+};
+
+// 내 폴더 별 자료 정보 반환
+export const getMyProjectFiles = async (
+    token: string,
+    sector: string,
+    title: string
+): Promise<AxiosResponse<MyFolderDetail, any> | null> => {
+    try {
+        const response = await possgAxios.post(
+            "project/files",
+            {
+                sector,
+                title
+            },
+            { headers: { Authorization: `Bearer ${token}` }}
+        );
+        return response;
+    } catch (error) {
+        if(isAxiosError<MyFolderDetail>(error)) {
+            console.log(`Error: ${error.response?.status} ${error.message}`);
+            return null;
+        } else {
+            return null;
+        }
+    }
+};
+
+// 자료 삭제
+export const deleteFile = async (
+    token: string,
+    fileData: MyFolderDetail2
+): Promise<AxiosResponse<SuccessResponse, any> | null> => {
+    try {
+        const response = await possgAxios.post(
+            "project/file-remove",
+            fileData,
+            { headers: { Authorization: `Bearer ${token}` }},
+        );
+        return response;
+    } catch (error) {
+        if(isAxiosError<SuccessResponse>(error)) {
+            console.log(`Error: ${error.response?.status} ${error.message}`);
+            return null;
+        } else {
+            return null;
+        }
+    }
+};
