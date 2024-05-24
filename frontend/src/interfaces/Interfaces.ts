@@ -43,10 +43,14 @@ export interface UploadResponse {
     message: string;
 }
 
+// export interface MyFolder {
+//     sector: string;
+//     title: string;
+//     src: string; // 썸네일 URL 추가
+// }
 export interface MyFolder {
-    sector: string;
     title: string;
-    src: string; // 썸네일 URL 추가
+    src: string;
 }
 
-export interface MyFolders extends Array<MyFolder> {}
+//export interface MyFolders extends Array<MyFolder> {}

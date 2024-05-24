@@ -2,7 +2,7 @@ import React, { useState, useEffect,FormEvent } from 'react';
 import ProjectFolder from '../components/ProjectFolder';
 import { Sector } from '../interfaces/Interfaces';
 import { useNavigate } from 'react-router-dom';
-import { transformFolders, getMyFolder, manageFolder } from '../api/possgAxios';
+import { getMyFolder, manageFolder } from '../api/possgAxios';
 import InputForm from '../components/InputForm';
 
 
@@ -32,8 +32,7 @@ const Home = () => {
             if (token) {
                 const folderResponse = await getMyFolder(token);
                 if (folderResponse && folderResponse.data) {
-                    const transformedFolders = transformFolders(folderResponse.data);
-                    setFolders(transformedFolders);
+                    setFolders(folderResponse.data);
                 }
             }
         };
@@ -111,7 +110,7 @@ const Home = () => {
                                         <div key={index} className='flex flex-col w-full p-2'>
                                             <ProjectFolder
                                                 sector={name}
-                                                src={'folder.src'}
+                                                src={folder.src}
                                                 text={folder.title}
                                                 // onClick={() => handleFolderClick(folder)}
                                             />
