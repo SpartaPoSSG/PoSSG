@@ -1,16 +1,26 @@
 import React, { useState } from 'react';
 import { MdDelete } from "react-icons/md";
 import { CustomFlowbiteTheme, TextInput } from 'flowbite-react';
+import { deleteFile } from '../api/possgAxios';
+import { useRecoilState } from 'recoil';
+import { selectedFolderState } from '../atom';
 
 function ProjectFile(props: {
-    name: string; src: string;
+    file_name: string; name: string; src: string;
 }) {
     const token = localStorage.getItem('token');
     const [titleInput, setTitleInput] = useState<string>(props.name);
+    const [folderInfo, setFolderInfo] = useRecoilState(selectedFolderState);
 
     const handleDeleteFile = async () => {
-        // 파일 삭제
-        if (token) {
+        if (token && folderInfo && folderInfo.sector && folderInfo.title) {
+            const fileInfo = {
+                sector: folderInfo.sector,
+                title: folderInfo.title,
+                file_name: props.file_name
+            }
+
+            await deleteFile(token, fileInfo);
         }
     };
 

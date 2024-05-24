@@ -1,7 +1,7 @@
 import { atom } from "recoil";
+import { MyFolder } from "./interfaces/Interfaces";
 
-// 폴더 수정 모드
-export const editState = atom<boolean>({
-    key: "editState",
-    default: false,
-  });
+export const selectedFolderState = atom<MyFolder | null>({
+  key: "selectedFolderState",
+  default: null,
+});
