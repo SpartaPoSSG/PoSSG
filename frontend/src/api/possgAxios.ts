@@ -1,5 +1,5 @@
 import axios, { AxiosResponse, isAxiosError } from "axios";
-import { EmailResponse, Folder, FolderResponse, LoginResponse, RegisterResponse, User, Users,UploadResponse,MyFolder  ,Sector} from "../interfaces/Interfaces";
+import { EmailResponse, Folder, FolderResponse, LoginResponse, RegisterResponse, User, Users,UploadResponse, MyFolders,MyFolder  ,Sector} from "../interfaces/Interfaces";
 
 
 const possgAxios = axios.create({
@@ -164,7 +164,7 @@ export const uploadThumbnail = async (
 // 내 폴더 정보 반환
 export const getMyFolder = async (
     token: string
-): Promise<AxiosResponse<Sector[], any> | null> => {
+): Promise<AxiosResponse<MyFolders, any> | null> => {
     try {
         const response = await possgAxios.get(
             "community/folder",
@@ -172,7 +172,7 @@ export const getMyFolder = async (
         );
         return response;
     } catch (error) {
-        if(isAxiosError<Sector[]>(error)) {
+        if(isAxiosError<MyFolders>(error)) {
             console.log(`Error: ${error.response?.status} ${error.message}`);
             return null;
         } else {
@@ -181,19 +181,19 @@ export const getMyFolder = async (
     }
 };
 
-// export const transformFolders = (folders: MyFolder[]): Sector[] => {
-//     const sectorMap: { [key: string]: { title: string; src: string }[] } = {};
+export const transformFolders = (folders: MyFolder[]): Sector[] => {
+    const sectorMap: { [key: string]: { title: string; src: string }[] } = {};
 
-//     folders.forEach(folder => {
-//         if (!sectorMap[folder.sector]) {
-//             sectorMap[folder.sector] = [];
-//         }
-//         sectorMap[folder.sector].push({ title: folder.title, src: folder.src }); // 썸네일 URL을 포함한 폴더 정보를 추가
-//     });
+    folders.forEach(folder => {
+        if (!sectorMap[folder.sector]) {
+            sectorMap[folder.sector] = [];
+        }
+        sectorMap[folder.sector].push({ title: folder.title, src: folder.src }); // 썸네일 URL을 포함한 폴더 정보를 추가
+    });
 
-//     return Object.keys(sectorMap).map(sector => ({
-//         name: sector,
-//         folders: sectorMap[sector]
-//     }));
-// };
+    return Object.keys(sectorMap).map(sector => ({
+        name: sector,
+        folders: sectorMap[sector]
+    }));
+};
 
