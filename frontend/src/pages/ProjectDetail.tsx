@@ -82,13 +82,14 @@ const ProjectDetail = () => {
     if (token) {
       const formData = new FormData();
       formData.append('sector', sector);
-      formData.append('folderName', folderName);
+      formData.append('title', folderName);
       
       filePreviews.forEach(({ file }) => {
         formData.append('files', file);
       });
 
-      await uploadProjectFiles(token, formData);
+      const response = await uploadProjectFiles(token, formData);
+      console.log(response?.data.message);
 
       setShowPopup(false);
       setActive(false);
@@ -110,13 +111,18 @@ const ProjectDetail = () => {
   };
 
   const fetchFiles = async () => {
-    if (token && folderInfo?.sector) {
-        const successResponse = await getMyProjectFiles(token, folderInfo?.sector, folderInfo?.title);
+    console.log(sector);
+    if (token) {
+        const successResponse = await getMyProjectFiles(token, sector, folderName);
+        console.log(successResponse?.data);
+        
         if (successResponse && successResponse.data) {
-          const files = successResponse.data.files.map(file => ({
-              file: file.file,
-              preview: file.src,
-              name: file.file.name.replace(/_/g, ' ')
+          setExist(true);
+
+          const files = successResponse.data.files.map(({ file, src }) => ({
+              file: file,
+              preview: src,
+              name: file.toString().split('/').pop()?.replace(/_/g, ' ') as string
           }));
           setFileFinals(files);
         }
@@ -125,7 +131,7 @@ const ProjectDetail = () => {
 
   useEffect(() => {
     fetchFiles();
-  }, [token]);
+  }, []);
 
   useEffect(() => {
     const updateContainerWidth = () => {
