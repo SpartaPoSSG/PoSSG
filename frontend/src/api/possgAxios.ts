@@ -1,5 +1,5 @@
 import axios, { AxiosResponse, isAxiosError } from "axios";
-import { EmailResponse, Folder, LoginResponse, User, Users, MyFolders, MyFolder, Sector, SuccessResponse, MyFolderDetail, MyFolderDetail2} from "../interfaces/Interfaces";
+import { EmailResponse, Folder, LoginResponse, User, Users, SuccessResponse, MyFolderDetail, MyFolderDetail2, MySectors} from "../interfaces/Interfaces";
 
 
 const possgAxios = axios.create({
@@ -164,7 +164,7 @@ export const uploadThumbnail = async (
 // 내 폴더 정보 반환
 export const getMyFolder = async (
     token: string
-): Promise<AxiosResponse<MyFolders, any> | null> => {
+): Promise<AxiosResponse<MySectors, any> | null> => {
     try {
         const response = await possgAxios.get(
             "community/folder",
@@ -172,29 +172,13 @@ export const getMyFolder = async (
         );
         return response;
     } catch (error) {
-        if(isAxiosError<MyFolders>(error)) {
+        if(isAxiosError<MySectors>(error)) {
             console.log(`Error: ${error.response?.status} ${error.message}`);
             return null;
         } else {
             return null;
         }
     }
-};
-
-export const transformFolders = (folders: MyFolder[]): Sector[] => {
-    const sectorMap: { [key: string]: { title: string; src: string }[] } = {};
-
-    folders.forEach(folder => {
-        if (!sectorMap[folder.sector]) {
-            sectorMap[folder.sector] = [];
-        }
-        sectorMap[folder.sector].push({ title: folder.title, src: folder.src }); // 썸네일 URL을 포함한 폴더 정보를 추가
-    });
-
-    return Object.keys(sectorMap).map(sector => ({
-        name: sector,
-        folders: sectorMap[sector]
-    }));
 };
 
 // 자료 업로드

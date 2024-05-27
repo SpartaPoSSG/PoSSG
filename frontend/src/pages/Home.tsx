@@ -1,8 +1,8 @@
 import React, { useState, useEffect,FormEvent } from 'react';
 import ProjectFolder from '../components/ProjectFolder';
-import { Sector } from '../interfaces/Interfaces';
+import { MySectors } from '../interfaces/Interfaces';
 import { useNavigate } from 'react-router-dom';
-import { transformFolders, getMyFolder, manageFolder } from '../api/possgAxios';
+import { getMyFolder, manageFolder } from '../api/possgAxios';
 import InputForm from '../components/InputForm';
 
 
@@ -10,7 +10,7 @@ const Home = () => {
     const navigate = useNavigate(); 
     const token = localStorage.getItem('token');
 
-    const [folders, setFolders] = useState<Sector[]>([
+    const [folders, setFolders] = useState<MySectors>([
         { name: '대외활동', folders: [] },
         { name: '공모전', folders: [] },
         { name: '동아리', folders: [] },
@@ -24,16 +24,33 @@ const Home = () => {
         '교내활동': ''
     });
 
-    useEffect(() => {
-        const fetchFolders = async () => {
-            if (token) {
-                const folderResponse = await getMyFolder(token);
-                if (folderResponse && folderResponse.data) {
-                    const transformedFolders = transformFolders(folderResponse.data);
-                    setFolders(transformedFolders);
+    const fetchFolders = async () => {
+        if (token) {
+            const folderResponse = await getMyFolder(token);
+            if (folderResponse && folderResponse.data) {
+                console.log(folderResponse.data);
+    
+                // 'folders' 키를 사용하여 배열을 추출
+                const foldersArray = folderResponse.data.folders;
+                console.log("Extracted foldersArray:", foldersArray);
+    
+                if (Array.isArray(foldersArray)) {
+                    const updatedFolders = folders.map(sector => {
+                        const sectorFolders = foldersArray
+                            .filter(folder => folder.name === sector.name)
+                            .flatMap(folder => folder.folders);  // 중첩 배열을 단일 배열로 변환
+                        return { ...sector, folders: sectorFolders };
+                    });
+    
+                    setFolders(updatedFolders);
+                } else {
+                    console.error('foldersArray is not an array:', foldersArray);
                 }
             }
-        };
+        }
+    };
+    
+    useEffect(() => {
         fetchFolders();
     }, [token]);
 
@@ -41,32 +58,19 @@ const Home = () => {
         e.preventDefault();
         const newFolderName = newFolderNames[sector];
         if (newFolderName.trim() !== '') {
-            // setFolders(prevFolders => {
-            //     return prevFolders.map(item => {
-            //         if (item.name === sector) {
-            //             return { ...item, folders: [...item.folders, newFolderName] };
-            //         }
-            //         return item;
-            //     });
-            // });
-
-            
-            //sector에 썸네일 추가해서 바꿈
             setFolders(prevFolders => {
                 return prevFolders.map(item => {
                     if (item.name === sector) {
-                        return { ...item, folders: [...item.folders, { title: newFolderName, src: 'img/example-img.png' }] }; // src 값은 초기화해도 될 듯합니다.
+                        return { ...item, folders: [...item.folders, { title: newFolderName, src: 'img/example-img.png' }] };
                     }
                     return item;
                 });
             });
-            
-            
+
             setNewFolderNames(prevNames => ({ ...prevNames, [sector]: '' }));
 
-            // 폴더 생성
             if (token) {
-                const folderResult = await manageFolder(token, {sector: sector, title: newFolderName, new_title: "" ,is_Exist: 0});
+                await manageFolder(token, { sector: sector, title: newFolderName, new_title: "", is_Exist: 0 });
             }
         }
     };
@@ -77,7 +81,6 @@ const Home = () => {
 
     const handleTitleInputKeyPress = (e: React.KeyboardEvent<HTMLInputElement>, sector: string) => {
         if (e.key === 'Enter') {
-            // 엔터를 누르면 제목을 가지고 폴더를 생성하는 로직을 수행합니다.
             handleMakeFolder(e, sector);
         }
     };
