@@ -18,14 +18,8 @@ export interface User {
 
 export interface Users extends Array<User> {}
 
-
-
-// export interface Sector {
-//     name: string;
-//     folders: { title: string, src: string }[];
-// }
-export interface MyProjectFolder {
-    sector: string;
+export interface Sector {
+    name: string;
     folders: FolderData[];
 }
 
@@ -33,10 +27,9 @@ export interface FolderData{
     title: string;
     src: string
 }
-export interface MyProjectFolder2{
-    sector : string;
-    title: string;
-    src: string
+
+export interface MySectors extends Array<Sector> {
+    [key: string]: any;
 }
 
 export interface Folder {
@@ -52,7 +45,7 @@ export interface MyFolder {
     src: string;
 }
 
-// export interface MyFolders extends Array<MyFolder> {}
+export interface MyFolders extends Array<MyFolder> {}
 
 export interface MyFolderDetail {
     sector: string;

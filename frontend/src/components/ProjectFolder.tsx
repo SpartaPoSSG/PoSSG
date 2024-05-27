@@ -5,14 +5,12 @@ import { manageFolder ,uploadThumbnail} from '../api/possgAxios';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { selectedFolderState } from '../atom';
-import { MyProjectFolder, FolderData } from '../interfaces/Interfaces';
 
 function ProjectFolder(props: {
-    sector :string, title: string; src:string
+    sector: string; title: string; src: string;
 }) {
     const navigate = useNavigate(); 
     const token = localStorage.getItem('token');
-    const [folders, setFolders] = useState<FolderData[]>([]);
     const [editMode, setEditMode] = useState(false);
     const [titleInput, setTitleInput] = useState<string>(props.title);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -53,35 +51,35 @@ function ProjectFolder(props: {
             const folderResult = await manageFolder(token, {sector: props.sector, title: titleInput, new_title: "", is_Exist: 2});
         }
     };
-//서버에 올리는 용도(썸네일)
-const handleUploadPhoto = async (file: File) => {
-    if (token) {
-        const formData = new FormData();
-        formData.append('sector', props.sector);
-        formData.append('folderName', titleInput);
-        formData.append('file', file);
-        
 
-        console.log('Sending form data:', {
-            sector: props.sector,
-            folderName: titleInput,
-            file: file.name
-        });
+    //서버에 올리는 용도(썸네일)
+    const handleUploadPhoto = async (file: File) => {
+        if (token) {
+            const formData = new FormData();
+            formData.append('sector', props.sector);
+            formData.append('folderName', titleInput);
+            formData.append('file', file);
+            
 
-        try {
-            const response = await uploadThumbnail(token, formData);
-            console.log('Response from server:', response);
-            if (response?.data.message === 'Upload success') {
-                setPreviewSrc(URL.createObjectURL(file));
+            console.log('Sending form data:', {
+                sector: props.sector,
+                folderName: titleInput,
+                file: file.name
+            });
+
+            try {
+                const response = await uploadThumbnail(token, formData);
+                console.log('Response from server:', response);
+                if (response?.data.message === 'Upload success') {
+                    setPreviewSrc(URL.createObjectURL(file));
+                }
+            } catch (error) {
+                console.error('Error uploading thumbnail:', error);
             }
-        } catch (error) {
-            console.error('Error uploading thumbnail:', error);
         }
-    }
-};
+    };
 
-
-//파일 선택하고 업로드 (프론트앤드 쪽)
+    //파일 선택하고 업로드 (프론트앤드 쪽)
     const handleFileUpload = () => {
         const fileInput = document.createElement('input');
         fileInput.type = 'file';
@@ -98,8 +96,6 @@ const handleUploadPhoto = async (file: File) => {
         fileInput.click();
     };
 
-
-
     const handleFolderClick = () => {
         const folderInfo = {
             sector: props.sector,
@@ -110,6 +106,7 @@ const handleUploadPhoto = async (file: File) => {
         navigate(`/project-detail/${props.sector}/${titleInput}`);
     };
 
+    
     return (
         <>
         <div className='flex flex-1 bg-white rounded-lg ml-1 mr-1 shadow-inner outline outline-1 outline-neutral-200 hover:outline-blue-500/50'>
@@ -152,4 +149,3 @@ const handleUploadPhoto = async (file: File) => {
 }
 
 export default ProjectFolder;
-
