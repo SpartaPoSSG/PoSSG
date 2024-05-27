@@ -5,12 +5,14 @@ import { manageFolder ,uploadThumbnail} from '../api/possgAxios';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { selectedFolderState } from '../atom';
+import { MyProjectFolder, FolderData } from '../interfaces/Interfaces';
 
 function ProjectFolder(props: {
-    sector: string; title: string; src: string;
+    sector :string, title: string; src:string
 }) {
     const navigate = useNavigate(); 
     const token = localStorage.getItem('token');
+    const [folders, setFolders] = useState<FolderData[]>([]);
     const [editMode, setEditMode] = useState(false);
     const [titleInput, setTitleInput] = useState<string>(props.title);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -150,3 +152,4 @@ const handleUploadPhoto = async (file: File) => {
 }
 
 export default ProjectFolder;
+
