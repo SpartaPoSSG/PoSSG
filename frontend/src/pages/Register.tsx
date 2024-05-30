@@ -43,13 +43,20 @@ const Register = () => {
         emailMessage: "사용 불가능한 이메일입니다.",
       }));
       setIsValid({ ...isValid, checkedPassword: false });
-    } else {
+    } else if (emailResult?.data.isExist == false) {
       // 이메일 사용 가능
       setValidMessage((prev) => ({
         ...prev,
         emailMessage: "사용 가능한 이메일입니다.",
       }));
       setIsValid({ ...isValid, checkedPassword: true });
+    } else {
+      // 기타 상황
+      setValidMessage((prev) => ({
+        ...prev,
+        emailMessage: "잠시 후 다시 시도해주세요.",
+      }));
+      setIsValid({ ...isValid, checkedPassword: false });
     }
   };
 
