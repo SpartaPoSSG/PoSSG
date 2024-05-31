@@ -59,7 +59,7 @@ const Home = () => {
             setFolders(prevFolders => {
                 return prevFolders.map(item => {
                     if (item.name === sector) {
-                        return { ...item, folders: [...item.folders, { title: newFolderName, src: 'img/example-img.png' }] };
+                        return { ...item, folders: [...item.folders, { title: newFolderName, src: 'img/thumbnails_basic.png' }] };
                     }
                     return item;
                 });
