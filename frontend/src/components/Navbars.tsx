@@ -1,14 +1,13 @@
 import React, { useState, useEffect, FormEvent } from "react";
 import { Button } from "flowbite-react";
-import { BiLogIn } from "react-icons/bi";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Navbar } from "flowbite-react";
 import { user } from "../api/possgAxios";
 
 const theme = {
   active: {
-    on: "bg-blue-700 text-white font-PretendardVariable font-normal dark:text-white md:bg-transparent md:text-blue-700",
-    off: "border-b border-gray-100 text-gray-700 font-PretendardVariable font-normal hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:border-0 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:bg-transparent md:dark:hover:text-white",
+    on: "bg-blue-700 text-white tracking-tighter font-PretendardVariable font-semibold dark:text-white md:bg-transparent md:text-black",
+    off: "border-b border-gray-100 text-gray-500 tracking-tighter font-PretendardVariable font-semibold dark:border-gray-700 dark:text-gray-400 md:border-0 md:hover:bg-transparent dark:hover:text-white md:hover:text-black md:dark:hover:text-white",
   },
 };
 
@@ -63,10 +62,10 @@ function Navbars() {
       <Navbar.Brand href="/">
         <img
           alt="Logo"
-          className="ml-6 mr-2 h-6 sm:h-9"
+          className="ml-20 mr-2 h-6 sm:h-9"
           src="/img/logo.png"
         />
-        <span className="self-center whitespace-nowrap font-PretendardVariable text-xl font-semibold dark:text-white">
+        <span className="self-center whitespace-nowrap font-seoleim text-xl dark:text-white">
           포쓱
         </span>
       </Navbar.Brand>
@@ -85,8 +84,8 @@ function Navbars() {
       <div className="flex items-center ml-auto gap-x-4 mr-10 list-none">
         {loggedIn && (
           <div className="flex items-center font-PretendardVariable list-none">
-              <div className='flex w-full font-semibold'>{userName}</div>&nbsp;
-              <span className='list-none'>님</span>&nbsp;&nbsp;
+              <div className='flex w-full font-bold'>{userName}</div>&nbsp;
+              <span className='list-none font-semibold'>님</span>&nbsp;&nbsp;
           </div>
         )}
         <Navbar.Link
@@ -94,8 +93,7 @@ function Navbars() {
           href="/login"
           className={getButtonStyle("/login")}
         >
-          <Button color="light" className={`${activeLink === 'login' ? 'active' : ''}`} onClick={handleLoginButtonClick}>
-            <BiLogIn className="mr-2 h-5 w-5"/>
+          <Button color="light" className={`font-semibold hover:bg-indigo-100 dark:hover:bg-gray-700 md:dark:hover:bg-transparent ${activeLink === 'login' ? 'active' : ''}`} onClick={handleLoginButtonClick}>
             {loggedIn ? '로그아웃' : '로그인'}
           </Button>
         </Navbar.Link>
