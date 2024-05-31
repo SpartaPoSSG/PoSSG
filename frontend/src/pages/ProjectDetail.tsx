@@ -164,7 +164,7 @@ const ProjectDetail = () => {
                       <p className='text-xl font-PretendardVariable font-semibold ml-3'>{sector}&nbsp;/&nbsp;{folderName}</p>
                       <button
                         type="submit"
-                        className="bg-blue-900 text-white text-xs font-PretendardVariable font-normal rounded-md py-2 px-5 mr-3 transition duration-200 ease-in-out cursor-pointer"
+                        className="bg-black text-white text-xs font-PretendardVariable font-normal rounded-md py-2 px-5 mr-3 transition duration-200 ease-in-out cursor-pointer"
                         onClick={handlePopUpButtonClick}
                       >
                       파일 업로드
@@ -247,7 +247,7 @@ const ProjectDetail = () => {
                         )}
                         <input type="file" className="file hidden" accept='.png, .jpeg, .pdf' onChange={handleUpload} multiple />
                       </label>
-                      <button className='w-full bg-blue-900 text-white text-xs font-PretendardVariable font-normal rounded-md py-3 mt-4 transition duration-200 ease-in-out cursor-pointer' onClick={handleUploadButtonClick}>업로드 하기</button>
+                      <button className={`w-full text-white text-xs font-PretendardVariable font-normal rounded-md py-3 mt-4 transition duration-200 ease-in-out cursor-pointer ${filePreviews.length? 'bg-blue-600' : 'bg-black'}`} onClick={handleUploadButtonClick}>업로드 하기</button>
                     </div>
                   )}
                 </div>
@@ -321,7 +321,7 @@ const ProjectDetail = () => {
                     )}
                     <input type="file" className="file hidden" accept='.png, .jpeg, .pdf' onChange={handleUpload} multiple />
                   </label>
-                  <button className='w-full bg-blue-900 text-white text-xs font-PretendardVariable font-normal rounded-md py-3 mt-4 transition duration-200 ease-in-out cursor-pointer' onClick={handleUploadButtonClick}>업로드 하기</button>
+                  <button className={`w-full text-white text-xs font-PretendardVariable font-normal rounded-md py-3 mt-4 transition duration-200 ease-in-out cursor-pointer ${filePreviews.length? 'bg-blue-600' : 'bg-black'}`} onClick={handleUploadButtonClick}>업로드 하기</button>
                 </div>
               </div>
             </>
