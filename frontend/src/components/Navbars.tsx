@@ -8,7 +8,7 @@ import { getUserFromLocalStorage, saveUserToLocalStorage, removeUserFromLocalSto
 
 const theme = {
   active: {
-    on: "bg-blue-700 text-white tracking-tighter font-PretendardVariable font-semibold dark:text-white md:bg-transparent md:text-black",
+    on: "text-black tracking-tighter font-PretendardVariable font-semibold dark:text-white md:bg-transparent md:text-black",
     off: "border-b border-gray-100 text-gray-500 tracking-tighter font-PretendardVariable font-semibold dark:border-gray-700 dark:text-gray-400 md:border-0 md:hover:bg-transparent dark:hover:text-white md:hover:text-black md:dark:hover:text-white",
   },
 };
@@ -98,7 +98,7 @@ function Navbars() {
           href="/login"
           className={getButtonStyle("/login")}
         >
-          <Button color="light" className={`font-semibold hover:bg-indigo-100 dark:hover:bg-gray-700 md:dark:hover:bg-transparent ${activeLink === 'login' ? 'active' : ''}`} onClick={handleLoginButtonClick}>
+          <Button color="light" className={`font-semibold hover:bg-gray-100 dark:hover:bg-gray-700 md:dark:hover:bg-transparent ${activeLink === 'login' ? 'active' : ''}`} onClick={handleLoginButtonClick}>
             {loggedIn ? '로그아웃' : '로그인'}
           </Button>
         </Navbar.Link>
