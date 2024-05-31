@@ -8,7 +8,7 @@ import { getUserFromLocalStorage, saveUserToLocalStorage, removeUserFromLocalSto
 
 const theme = {
   active: {
-    on: "bg-blue-700 text-white tracking-tighter font-PretendardVariable font-semibold dark:text-white md:bg-transparent md:text-black",
+    on: "text-black tracking-tighter font-PretendardVariable font-semibold dark:text-white md:bg-transparent md:text-black",
     off: "border-b border-gray-100 text-gray-500 tracking-tighter font-PretendardVariable font-semibold dark:border-gray-700 dark:text-gray-400 md:border-0 md:hover:bg-transparent dark:hover:text-white md:hover:text-black md:dark:hover:text-white",
   },
 };
