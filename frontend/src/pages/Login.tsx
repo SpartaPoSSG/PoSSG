@@ -42,7 +42,7 @@ const Login = () => {
             <img
               className="mx-auto w-1/4"
               alt='logo'
-              src="/img/logo.png"
+              src="/img/logo_b.png"
             />
           </div>
           <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">

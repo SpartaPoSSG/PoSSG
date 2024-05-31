@@ -1,8 +1,10 @@
-import React, { useState, useEffect, FormEvent } from "react";
-import { Button } from "flowbite-react";
+import React, { useState, useEffect } from "react";
+import { Button, Navbar } from "flowbite-react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Navbar } from "flowbite-react";
 import { user } from "../api/possgAxios";
+import { useRecoilState } from 'recoil';
+import { savedUserState } from "../atom";
+import { getUserFromLocalStorage, saveUserToLocalStorage, removeUserFromLocalStorage } from "../utils/localStorage";
 
 const theme = {
   active: {
@@ -15,39 +17,42 @@ function Navbars() {
   const location = useLocation();
   const navigate = useNavigate();
   const [activeLink, setActiveLink] = useState<string>('');
-  const [loggedIn, setLoggedIn] = useState<boolean>(false); // 로그인 상태
-  const [userName, setUserName] = useState<string>(''); // 사용자 이름
-  
+  const [loggedIn, setLoggedIn] = useState<boolean>(false);
+  const [userInfo, setUserInfo] = useRecoilState(savedUserState);
+
   const token = localStorage.getItem('token');
 
-  // 로그인 버튼 클릭 시 이벤트 핸들러
   const handleLoginButtonClick = () => {
     if (loggedIn) {
-      // 로그아웃 처리
       localStorage.removeItem('token');
+      removeUserFromLocalStorage();
+      setUserInfo(null);
       setLoggedIn(false);
     } else {
-      // 로그인 처리
       navigate("/login");
     }
   };
 
   const getUserNickname = async () => {
-    if (token) {
+    if (token && !userInfo) {
       const userInfoResult = await user(token);
-
       if (userInfoResult?.data) {
-        setUserName(userInfoResult.data.nickname);
+        setUserInfo(userInfoResult.data);
+        saveUserToLocalStorage(userInfoResult.data);
       }
     }
   }
 
   useEffect(() => {
     setActiveLink(location.pathname);
-
+    const storedUser = getUserFromLocalStorage();
     if (token) {
       setLoggedIn(true);
-      getUserNickname();
+      if (storedUser) {
+        setUserInfo(storedUser);
+      } else {
+        getUserNickname();
+      }
     } else {
       setLoggedIn(false);
     }
@@ -63,7 +68,7 @@ function Navbars() {
         <img
           alt="Logo"
           className="ml-20 mr-2 h-6 sm:h-9"
-          src="/img/logo.png"
+          src="/img/logo_b.png"
         />
         <span className="self-center whitespace-nowrap font-seoleim text-xl dark:text-white">
           포쓱
@@ -84,7 +89,7 @@ function Navbars() {
       <div className="flex items-center ml-auto gap-x-4 mr-10 list-none">
         {loggedIn && (
           <div className="flex items-center font-PretendardVariable list-none">
-              <div className='flex w-full font-bold'>{userName}</div>&nbsp;
+              <div className='flex w-full font-bold'>{userInfo?.nickname}</div>&nbsp;
               <span className='list-none font-semibold'>님</span>&nbsp;&nbsp;
           </div>
         )}
