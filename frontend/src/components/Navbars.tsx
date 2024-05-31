@@ -98,7 +98,7 @@ function Navbars() {
           href="/login"
           className={getButtonStyle("/login")}
         >
-          <Button color="light" className={`font-semibold hover:bg-indigo-100 dark:hover:bg-gray-700 md:dark:hover:bg-transparent ${activeLink === 'login' ? 'active' : ''}`} onClick={handleLoginButtonClick}>
+          <Button color="light" className={`font-semibold hover:bg-gray-100 dark:hover:bg-gray-700 md:dark:hover:bg-transparent ${activeLink === 'login' ? 'active' : ''}`} onClick={handleLoginButtonClick}>
             {loggedIn ? '로그아웃' : '로그인'}
           </Button>
         </Navbar.Link>
