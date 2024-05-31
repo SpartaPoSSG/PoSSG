@@ -59,7 +59,16 @@ const Home = () => {
             setFolders(prevFolders => {
                 return prevFolders.map(item => {
                     if (item.name === sector) {
-                        return { ...item, folders: [...item.folders, { title: newFolderName, src: 'img/thumbnails_basic.png' }] };
+                        if (sector == '대외활동') {
+                            return { ...item, folders: [...item.folders, { title: newFolderName, src: 'img/thumbnails_skyblue.png' }] };
+                        } else if (sector == '공모전') {
+                            return { ...item, folders: [...item.folders, { title: newFolderName, src: 'img/thumbnails_green.png' }] };
+                        } else if (sector == '동아리') {
+                            return { ...item, folders: [...item.folders, { title: newFolderName, src: 'img/thumbnails_purple.png' }] };
+                        } else {
+                            return { ...item, folders: [...item.folders, { title: newFolderName, src: 'img/thumbnails_pink.png' }] };
+                        }
+                        
                     }
                     return item;
                 });

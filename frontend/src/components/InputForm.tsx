@@ -19,7 +19,7 @@ const InputForm: React.FC<InputFormProps> = ({ value, onChange, onSubmit, placeh
             />
             <button
                 type="submit"
-                className="bg-blue-900 text-white text-xs font-PretendardVariable font-normal rounded-md py-2 px-5 mr-3 transition duration-200 ease-in-out cursor-pointer">
+                className="bg-blue-600 text-white text-xs font-PretendardVariable font-normal rounded-md py-2 px-5 mr-3 transition duration-200 ease-in-out cursor-pointer">
                 폴더생성
             </button>
         </form>
