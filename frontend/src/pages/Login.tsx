@@ -42,7 +42,7 @@ const Login = () => {
             <img
               className="mx-auto w-1/4"
               alt='logo'
-              src="/img/logo_b.png"
+              src="/img/logo_black.png"
             />
           </div>
           <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
@@ -83,7 +83,7 @@ const Login = () => {
               <div>
                 <button
                   type="submit"
-                  className="w-full flex justify-center rounded-lg bg-blue-900 py-2 px-4 font-PretendardVariable text-lg font-semibold leading-tight text-white shadow-md transition duration-200 ease-in-out cursor-pointer mb-2"
+                  className="w-full flex justify-center rounded-lg bg-blue-600 py-2 px-4 font-PretendardVariable text-m font-semibold leading-tight text-white shadow-md transition duration-200 ease-in-out cursor-pointer mb-2"
                 >
                   로그인
                 </button>

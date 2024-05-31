@@ -152,7 +152,7 @@ const Register = () => {
                       required
                     />
                     <button
-                      className="absolute right-3 top-4 w-15 bg-blue-900 text-white text-xs font-PretendardVariable font-normal rounded-md py-1 px-2 transition duration-200 ease-in-out cursor-pointer"
+                      className="absolute right-3 top-4 w-15 bg-blue-600 text-white text-xs font-PretendardVariable font-normal rounded-md py-1 px-2 transition duration-200 ease-in-out cursor-pointer"
                       onClick={handleCheckEmail}>중복확인
                     </button>
                     <p className={`text-gray-500 sm:text-sm ml-2 mt-1`}>
@@ -223,12 +223,12 @@ const Register = () => {
                   </div>
                   <button
                     type="submit"
-                    className="w-full flex justify-center rounded-lg bg-blue-900 py-3 px-4 font-PretendardVariable text-lg font-medium leading-tight text-white shadow-md transition duration-200 ease-in-out cursor-pointer mb-2">
+                    className="w-full flex justify-center rounded-lg bg-blue-600 py-3 px-4 font-PretendardVariable text-lg font-medium leading-tight text-white shadow-md transition duration-200 ease-in-out cursor-pointer mb-2">
                     포쓱 시작하기
                   </button>
                   <p className="mt-10 text-center text-sm text-gray-500">
                     이미 회원가입을 하셨나요?&nbsp;&nbsp;&nbsp;
-                    <a href="/login" className="font-medium text-primary-600 hover:underline dark:text-primary-500">로그인하기</a>
+                    <a href="/login" className="font-semibold text-primary-600 hover:underline dark:text-primary-500">로그인하기</a>
                   </p>
                 </form>
               </div>
