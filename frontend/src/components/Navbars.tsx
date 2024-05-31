@@ -68,7 +68,7 @@ function Navbars() {
         <img
           alt="Logo"
           className="ml-20 mr-2 h-6 sm:h-9"
-          src="/img/logo_b.png"
+          src="/img/logo_black.png"
         />
         <span className="self-center whitespace-nowrap font-seoleim text-xl dark:text-white">
           포쓱
