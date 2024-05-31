@@ -156,7 +156,7 @@ const Home = () => {
             </div>
             <Button
                 color="dark" pill
-                className="fixed cursor-auto bottom-0 left-1/2 transform -translate-x-1/2 mb-3 ml-2 py-1 font-bold bg-black rounded-lg shadow-3xl"
+                className="fixed cursor-auto bottom-0 left-1/2 transform -translate-x-1/2 mb-3 py-1 font-bold bg-black rounded-lg shadow-3xl"
                 style={{ width: containerWidth }}
             >
                 <img
