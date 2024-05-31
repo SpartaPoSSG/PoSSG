@@ -118,19 +118,16 @@ const Register = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (isValid.nickname && isValid.password && isValid.checkedPassword) {
-      if (validMessage.emailMessage === "사용 가능한 이메일입니다.") {
-        const registerResult = await register(signupForm.email, signupForm.password, signupForm.nickname);
+    if (isValid) {
+      const registerResult = await register(signupForm.email, signupForm.password, signupForm.nickname);
 
-        if (registerResult) {
-          navigate('/login');
-        } else {
-          console.error('register fail');
-        }
+      if (registerResult) {
+        navigate('/login');
       } else {
-        return;
+        console.error('register fail');
       }
     } else {
+      console.error('register fail');
       return;
     }    
   };
