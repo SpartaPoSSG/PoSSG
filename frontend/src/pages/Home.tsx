@@ -108,21 +108,21 @@ const Home = () => {
                                     placeholder="폴더 제목을 입력하세요"
                                 />
                             </div>
-                            <div className='grid grid-cols-1 md:grid-cols-3 gap-4 pt-5'>
-                                {folders.length === 0 ? (
-                                    <div className="text-center">폴더가 없습니다.</div>
-                                ) : (
-                                    folders.map((folder, index) => (
-                                        <div key={index} className='flex flex-col w-full p-2'>
+                            {folders.length === 0 ? (
+                                <div className="bg-gray-50 border border-gray-200 text-xs font-PretendardVariable font-normal rounded-md mt-3 px-3 py-5 mx-3 text-center">폴더가 없습니다.</div>
+                            ) : (
+                                folders.map((folder, index) => (
+                                    <div key={index} className='grid grid-cols-1 md:grid-cols-3 gap-4 pt-5'>
+                                        <div  className='flex flex-col w-full p-2'>
                                             <ProjectFolder
                                                 sector={name}
                                                 src={folder.src}
                                                 title={folder.title}
                                             />
                                         </div>
-                                    ))
-                                )}
-                            </div>
+                                    </div>
+                                ))
+                            )}
                         </div>
                     ))}
                 </div>
