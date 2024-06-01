@@ -8,6 +8,8 @@ import ProjectFile from '../components/ProjectFile';
 import { getMyProjectFiles, uploadProjectFiles } from '../api/possgAxios';
 import { useRecoilState } from 'recoil';
 import { selectedFolderState } from '../atom';
+import { Button } from 'flowbite-react';
+import { FaWandMagicSparkles } from "react-icons/fa6";
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 
@@ -110,6 +112,10 @@ const ProjectDetail = () => {
     }
   };
 
+  const handleSummaryButtonClick = () => {
+    // 개발 예정
+  }
+
   const fetchFiles = async () => {
     console.log(sector);
     if (token) {
@@ -161,14 +167,23 @@ const ProjectDetail = () => {
               <div className='flex-1 flex-grow-4 self-start max-w-none prose-lg mx-4 text-gray-700'>
                 <div id="content-container" className='mx-auto md:w-[80%]'>
                   <div className='flex justify-between items-center pt-12 pb-2 border-b border-gray-500'>
-                      <p className='text-xl font-PretendardVariable font-semibold ml-3'>{sector}&nbsp;/&nbsp;{folderName}</p>
-                      <button
-                        type="submit"
-                        className="bg-black text-white text-xs font-PretendardVariable font-normal rounded-md py-2 px-5 mr-3 transition duration-200 ease-in-out cursor-pointer"
-                        onClick={handlePopUpButtonClick}
-                      >
-                      파일 업로드
-                      </button>
+                    <p className='text-xl font-PretendardVariable font-semibold ml-3'>{sector}&nbsp;/&nbsp;{folderName}</p>
+                    <div className='flex items-center'>
+                        <Button
+                          className='text-black border-slate-300 custom-gradient-hover from-gradient-start to-gradient-end h-8 font-semibold mr-3'
+                          onClick={handleSummaryButtonClick}
+                        >
+                            <FaWandMagicSparkles />&nbsp;
+                            <p className='text-xs'>요약</p>
+                        </Button>
+                        <button
+                          type="submit"
+                          className="bg-black text-white text-xs font-PretendardVariable font-normal rounded-md py-2 px-5 transition duration-200 ease-in-out cursor-pointer"
+                          onClick={handlePopUpButtonClick}
+                        >
+                        파일 업로드
+                        </button>
+                    </div>
                   </div>
                   <div className='mt-3'>
                     <div className='grid grid-cols-1 md:grid-cols-5 gap-2 ml-3 mr-3 mt-5 mb-5'>
