@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import { MdEdit,MdDelete, MdPhoto } from "react-icons/md";
-import { CustomFlowbiteTheme, TextInput, Button, Modal } from 'flowbite-react';
+import { CustomFlowbiteTheme, TextInput, Button, Modal,Alert } from 'flowbite-react';
 import { manageFolder ,uploadThumbnail} from '../api/possgAxios';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { selectedFolderState } from '../atom';
 import { HiOutlineExclamationCircle } from "react-icons/hi";
+import { HiInformationCircle } from "react-icons/hi";
+
 
 function ProjectFolder(props: {
-    sector: string; title: string; src: string;
+    sector: string; title: string; src: string; setError: (error: string | null) => void;
 }) {
     const navigate = useNavigate(); 
     const token = localStorage.getItem('token');
@@ -41,7 +43,14 @@ function ProjectFolder(props: {
     const handleFolderNameSubmit = async () => {
         // 폴더명 수정 후 백엔드에 수정된 내용 전달
         if (token) {
-            const folderResult = await manageFolder(token, {sector: props.sector, title: props.title, new_title: titleInput, is_Exist: 1});
+            const folderResult = await manageFolder(token, { sector: props.sector, title: props.title, new_title: titleInput, is_Exist: 1 });
+            // 폴더 이름이 중복되었을 경우
+            if (folderResult?.data?.message === "same") {
+                // 에러 메시지 표시 또는 처리
+                console.log("Folder name already exists!");
+                props.setError('이미 존재하는 폴더 이름입니다.');
+                return; // 수정 모드를 유지하고 함수 종료
+            }
         }
 
         setEditMode(false); // 수정 모드 종료
