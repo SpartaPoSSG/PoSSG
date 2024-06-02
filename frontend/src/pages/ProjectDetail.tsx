@@ -21,7 +21,9 @@ const ProjectDetail = () => {
   const [isExist, setExist] = useState<boolean>(false);
   const [filePreviews, setFilePreviews] = useState<{ file: File; preview: string, name: string }[]>([]);
   const [fileFinals, setFileFinals] = useState<{ file: File; preview: string, name: string }[]>([]);
+  const [folderPortfolio, setFolderPortfolio] = useState<File>();
   const [showPopup, setShowPopup] = useState<boolean>(false);
+  const [showSummary, setShowSummary] = useState<boolean>(false);
   const [containerWidth, setContainerWidth] = useState<number>(0);
 
   const popupRef = useRef<HTMLDivElement>(null);
@@ -113,18 +115,29 @@ const ProjectDetail = () => {
   };
 
   const handleSummaryButtonClick = () => {
-    // 개발 예정
+    setShowSummary(true);
   }
 
   const fetchFiles = async () => {
     console.log(sector);
     if (token) {
-        const successResponse = await getMyProjectFiles(token, sector, folderName);
+        const folder = {
+          sector: sector,
+          title: folderName
+        }
+        const successResponse = await getMyProjectFiles(token, folder);
         console.log(successResponse?.data);
         
         if (successResponse && successResponse.data) {
-          setExist(true);
+          if (successResponse.data.files.length > 0) {
+            setExist(true);
+          }
 
+          if (successResponse.data.folder_portfolio) {
+            setFolderPortfolio(successResponse.data.folder_portfolio);
+            setShowSummary(true);
+          }
+          
           const files = successResponse.data.files.map(({ file, src }) => ({
               file: file,
               preview: src,
@@ -187,6 +200,11 @@ const ProjectDetail = () => {
                   </div>
                   <div className='mt-3'>
                     <div className='grid grid-cols-1 md:grid-cols-5 gap-2 ml-3 mr-3 mt-5 mb-5'>
+                        {showSummary && (
+                          <>
+                          test
+                          </>
+                        )}
                         {/* 자료 반환한 거 띄우는 위치 */}
                         {fileFinals.map((fileFinals, index) => (
                           <div key={index} className='flex flex-col w-full pb-1'>
