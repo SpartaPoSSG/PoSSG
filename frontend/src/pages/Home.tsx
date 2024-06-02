@@ -140,7 +140,7 @@ const Home = () => {
 
     return (
         <>
-            <div className='comp_content flex w-screen justify-center self-stretch  '>
+            <div className='flex w-screen justify-center self-stretch'>
                 <div className='flex flex-1 flex-col md:flex-row box-border max-w-screen-xl items-center justify-start px-5 md:px-20 xl:px-10 pt-20 pb-20'>
                     <div className='flex-1 flex-grow-4 self-start max-w-none prose-lg mx-4 '>
                         <div className='comp_content flex justify-center my-3 mb-0'>
@@ -154,7 +154,7 @@ const Home = () => {
                             )}
                         </div>
                         {folders.map(({ name, folders }) => (
-                            <div key={name} id="content-container" className='comp_summary mx-auto md:w-[80%]'>
+                            <div key={name} id="content-container" className='mx-auto md:w-[80%]'>
                                 <div className='flex justify-between items-center pt-12 pb-2 border-b border-gray-500'>
                                     <p className='text-xl font-PretendardVariable font-semibold ml-3'>{name}</p>
                                     <InputForm
@@ -243,7 +243,7 @@ const Home = () => {
                     <Button
                         className='w-auto tracking-tighter border-none font-bold px-3 bg-blue-600 hover:bg-blue-700'
                         onClick={movePortfolioBtn}
-                        style={{ width: '160px' ,height:'40px',marginTop: '7px', marginBottom: '7px'}} // 버튼의 너비를 조절합니다.
+                        style={{ width: '180px' ,height:'40px',marginTop: '7px', marginBottom: '7px'}} // 버튼의 너비를 조절합니다.
                     >
                         <p className='text-base'>지금 만들어보기</p>
                     </Button>
