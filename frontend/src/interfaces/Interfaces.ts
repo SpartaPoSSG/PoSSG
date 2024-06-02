@@ -56,7 +56,7 @@ export interface MyFolderDetail {
     sector: string;
     title: string;
     files: FileData[];
-    folder_portfolio: File;
+    folder_portfolio: string;
 }
 
 export interface MyFolderDetail2 {
@@ -71,5 +71,5 @@ export interface FileData {
 }
 
 export interface FolderPortfolio {
-    file: File
+    summary: string;
 }

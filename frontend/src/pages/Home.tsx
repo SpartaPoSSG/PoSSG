@@ -140,21 +140,21 @@ const Home = () => {
 
     return (
         <>
-            <div className='comp_content flex w-screen justify-center self-stretch  '>
+            <div className='flex w-screen justify-center self-stretch'>
                 <div className='flex flex-1 flex-col md:flex-row box-border max-w-screen-xl items-center justify-start px-5 md:px-20 xl:px-10 pt-20 pb-20'>
                     <div className='flex-1 flex-grow-4 self-start max-w-none prose-lg mx-4 '>
-                    <div className='comp_content flex justify-center my-3 mb-0 w-screen'>
+                        <div className='flex justify-center my-3 mb-0'>
                         {error && (
                             // <Alert color="failure" icon={HiOutlineExclamationCircle} >
                             //     <span className="font-medium">Error: </span> {error}
                             // </Alert>
-                            <Alert color="failure" icon={HiInformationCircle}>
+                            <Alert color="failure" icon={HiInformationCircle} className='bg-red-200' style={{ width: containerWidth-20 }}>
                                 <span className="font-medium">Info alert!</span> Change a few things up and try submitting again.
                             </Alert>
                         )}
                         </div>
                         {folders.map(({ name, folders }) => (
-                            <div key={name} id="content-container" className='comp_summary mx-auto md:w-[80%]'>
+                            <div key={name} id="content-container" className='mx-auto md:w-[80%]'>
                                 <div className='flex justify-between items-center pt-12 pb-2 border-b border-gray-500'>
                                     <p className='text-xl font-PretendardVariable font-semibold ml-3'>{name}</p>
                                     <InputForm
@@ -184,9 +184,8 @@ const Home = () => {
                     </div>
                 </div>
             </div>
-            <Button
-                color="dark" pill
-                className="fixed cursor-auto bottom-0 left-1/2 transform -translate-x-1/2 mb-3 py-1 font-bold bg-black rounded-lg shadow-3xl"
+            <div
+                className="fixed text-white bg-black cursor-auto bottom-0 left-1/2 transform -translate-x-1/2 mb-3 py-1 font-bold bg-black rounded-lg shadow-3xl"
                 style={{ width: containerWidth }}
             >
                 <img
@@ -201,7 +200,7 @@ const Home = () => {
                 >
                     <p className='text-base'>지금 만들어보기</p>
                 </Button>
-            </Button>
+            </div>
         </>
     );
 };
