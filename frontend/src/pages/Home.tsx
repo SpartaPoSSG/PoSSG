@@ -143,13 +143,13 @@ const Home = () => {
             <div className='comp_content flex w-screen justify-center self-stretch  '>
                 <div className='flex flex-1 flex-col md:flex-row box-border max-w-screen-xl items-center justify-start px-5 md:px-20 xl:px-10 pt-20 pb-20'>
                     <div className='flex-1 flex-grow-4 self-start max-w-none prose-lg mx-4 '>
-                    <div className='comp_content flex justify-center my-3 mb-0 w-screen'>
+                    <div className='comp_content flex justify-center my-3 mb-0'>
                         {error && (
                             // <Alert color="failure" icon={HiOutlineExclamationCircle} >
                             //     <span className="font-medium">Error: </span> {error}
                             // </Alert>
-                            <Alert color="failure" icon={HiInformationCircle}>
-                                <span className="font-medium">Info alert!</span> Change a few things up and try submitting again.
+                            <Alert color="failure" icon={HiInformationCircle} className='bg-red-200' style={{width:containerWidth-20}}>
+                                <span className="font-medium">Error: </span> {error}
                             </Alert>
                         )}
                         </div>
