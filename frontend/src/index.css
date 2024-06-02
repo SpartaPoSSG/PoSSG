@@ -22,3 +22,9 @@ code {
   font-weight: bold;
   font-style: normal;
 }
+
+@media (max-width: 1000px) {
+  .bottom-bar {
+      display: none;
+  }
+}
