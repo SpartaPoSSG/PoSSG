@@ -1,5 +1,5 @@
 import axios, { AxiosResponse, isAxiosError } from "axios";
-import { EmailResponse, Folder, LoginResponse, User, Users, SuccessResponse, MyFolderDetail, MyFolderDetail2, MySectors, MyFolder2, FolderPortfolio} from "../interfaces/Interfaces";
+import { EmailResponse, Folder, LoginResponse, User, Users, SuccessResponse, MyFolderDetail, MyFolderDetail2, MySectors, MyFolder2, FolderPortfolio, MyPortfolio} from "../interfaces/Interfaces";
 
 
 const possgAxios = axios.create({
@@ -271,3 +271,45 @@ export const getFolderPortfolio = async (
         }
     }
 };
+
+// 내 포트폴리오 생성
+export const makePortfolio = async (
+    token: string,
+): Promise<AxiosResponse<MyPortfolio, any> | null> => {
+    try {
+        const response = await possgAxios.post(
+            "community/make-portfolio",
+            { headers: { Authorization: `Bearer ${token}` }},
+        );
+        return response;
+    } catch (error) {
+        if(isAxiosError<MyPortfolio>(error)) {
+            console.log(`Error: ${error.response?.status} ${error.message}`);
+            return null;
+        } else {
+            return null;
+        }
+    }
+};
+
+// 내 포트폴리오 반환
+export const getPortfolio = async (
+    token: string,
+): Promise<AxiosResponse<MyPortfolio, any> | null> => {
+    try {
+        const response = await possgAxios.get(
+            "community/total-portfolio",
+            { headers: { Authorization: `Bearer ${token}` }},
+        );
+        return response;
+    } catch (error) {
+        if(isAxiosError<MyPortfolio>(error)) {
+            console.log(`Error: ${error.response?.status} ${error.message}`);
+            return null;
+        } else {
+            return null;
+        }
+    }
+};
+
+// 직무추천
