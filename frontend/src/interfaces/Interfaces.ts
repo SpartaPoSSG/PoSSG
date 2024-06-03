@@ -73,3 +73,7 @@ export interface FileData {
 export interface FolderPortfolio {
     summary: string;
 }
+
+export interface MyPortfolio {
+    file: File;
+}
