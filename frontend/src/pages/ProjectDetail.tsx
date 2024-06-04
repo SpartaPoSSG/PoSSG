@@ -5,9 +5,13 @@ import Footer from '../components/Footer';
 import ProjectPreview from '../components/ProjectPreview';
 import { Document, Page, pdfjs } from "react-pdf";
 import ProjectFile from '../components/ProjectFile';
-import { getMyProjectFiles, uploadProjectFiles } from '../api/possgAxios';
+import { getFolderPortfolio, getMyProjectFiles, uploadProjectFiles } from '../api/possgAxios';
 import { useRecoilState } from 'recoil';
 import { selectedFolderState } from '../atom';
+import { Banner, Button, Dropdown, Spinner } from 'flowbite-react';
+import { FaWandMagicSparkles } from "react-icons/fa6";
+import { HiX } from 'react-icons/hi';
+import { MdAnnouncement } from 'react-icons/md';
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 
@@ -19,11 +23,19 @@ const ProjectDetail = () => {
   const [isExist, setExist] = useState<boolean>(false);
   const [filePreviews, setFilePreviews] = useState<{ file: File; preview: string, name: string }[]>([]);
   const [fileFinals, setFileFinals] = useState<{ file: File; preview: string, name: string }[]>([]);
+  const [folderPortfolio, setFolderPortfolio] = useState<string>("");
   const [showPopup, setShowPopup] = useState<boolean>(false);
+  const [showSummary, setShowSummary] = useState<boolean>(false);
+  const [isPortfolioExist, setPortfolioExist] = useState<boolean>(false);
   const [containerWidth, setContainerWidth] = useState<number>(0);
 
   const popupRef = useRef<HTMLDivElement>(null);
   const token = localStorage.getItem('token');
+
+  const folder = {
+    sector: sector,
+    title: folderName
+  }
 
   const Logo = () => (
     <svg className="w-24 h-24 mt-32 pointer-events-none" x="0px" y="0px" viewBox="0 0 24 24">
@@ -110,15 +122,41 @@ const ProjectDetail = () => {
     }
   };
 
+  const handleSummaryButtonClick = async () => {
+    setShowSummary(true);
+
+    if (folderPortfolio) {
+      setPortfolioExist(true);
+    } else {
+      setPortfolioExist(true);
+
+      if (token) {
+        const folderPortfolioResponse = await getFolderPortfolio(token, folder);
+
+        if (folderPortfolioResponse && folderPortfolioResponse.data.summary) {
+          setFolderPortfolio(folderPortfolioResponse.data.summary);
+          setPortfolioExist(true);
+        }
+      }
+    }
+  }
+
   const fetchFiles = async () => {
     console.log(sector);
     if (token) {
-        const successResponse = await getMyProjectFiles(token, sector, folderName);
+        const successResponse = await getMyProjectFiles(token, folder);
         console.log(successResponse?.data);
         
         if (successResponse && successResponse.data) {
-          setExist(true);
+          if (successResponse.data.files.length > 0) {
+            setExist(true);
+          }
 
+          if (successResponse.data.folder_portfolio) {
+            setFolderPortfolio(successResponse.data.folder_portfolio);
+            setShowSummary(true);
+          }
+          
           const files = successResponse.data.files.map(({ file, src }) => ({
               file: file,
               preview: src,
@@ -161,16 +199,81 @@ const ProjectDetail = () => {
               <div className='flex-1 flex-grow-4 self-start max-w-none prose-lg mx-4 text-gray-700'>
                 <div id="content-container" className='mx-auto md:w-[80%]'>
                   <div className='flex justify-between items-center pt-12 pb-2 border-b border-gray-500'>
-                      <p className='text-xl font-PretendardVariable font-semibold ml-3'>{sector}&nbsp;/&nbsp;{folderName}</p>
-                      <button
-                        type="submit"
-                        className="bg-blue-900 text-white text-xs font-PretendardVariable font-normal rounded-md py-2 px-5 mr-3 transition duration-200 ease-in-out cursor-pointer"
-                        onClick={handlePopUpButtonClick}
-                      >
-                      파일 업로드
-                      </button>
+                    <p className='text-xl font-PretendardVariable font-semibold ml-3'>{sector}&nbsp;/&nbsp;{folderName}</p>
+                    <div className='flex items-center'>
+                        <Button
+                          className='text-black border-slate-300 custom-gradient-hover from-gradient-start to-gradient-end h-8 font-semibold mr-3'
+                          onClick={handleSummaryButtonClick}
+                        >
+                            <FaWandMagicSparkles />&nbsp;
+                            <p className='text-xs'>요약</p>
+                        </Button>
+                        <button
+                          type="submit"
+                          className="bg-black text-white text-xs font-PretendardVariable font-normal rounded-md py-2 px-5 transition duration-200 ease-in-out cursor-pointer"
+                          onClick={handlePopUpButtonClick}
+                        >
+                        파일 업로드
+                        </button>
+                    </div>
                   </div>
                   <div className='mt-3'>
+                    {showSummary ? (
+                      <>
+                      {isPortfolioExist ? (
+                        <>
+                        <Dropdown 
+                          label={<span className="text-black text-lg">내 폴더 요약 정보 확인하기!</span>} 
+                          className='border-0 bg-blue-100'
+                          style={{ width: containerWidth }}
+                        >
+                          <Dropdown.Header style={{ width: containerWidth }}>
+                            <span className="block text-sm">{folderPortfolio}</span>
+                          </Dropdown.Header>
+                        </Dropdown>
+                        </>
+                      ) : (
+                        <>
+                        <Banner className='ml-3 mr-3'>
+                          <div className="flex w-full flex-col justify-between bg-blue-100 rounded-lg border border-gray-100 bg-white p-4 shadow-sm dark:border-gray-600 dark:bg-gray-700 md:flex-row lg:max-w-7xl">
+                            <div className="mx-auto flex items-center">
+                              <p className="flex items-center text-sm font-normal text-gray-500 dark:text-gray-400">
+                                <MdAnnouncement className="mr-4 h-4 w-4" />
+                                <span className="[&_p]:inline">
+                                  폴더 정보를 요약하고 있어요! 조금만 기다려주세요!&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                  <Spinner aria-label="Center-aligned spinner example bg-blue-600" />
+                                </span>
+                              </p>
+                            </div>
+                          </div>
+                        </Banner>
+                        </>
+                      )}
+                      </>
+                    ) : (
+                      <>
+                      <Banner className='ml-3 mr-3'>
+                        <div className="flex w-full flex-col justify-between bg-blue-100 rounded-lg border border-gray-100 bg-white p-4 shadow-sm dark:border-gray-600 dark:bg-gray-700 md:flex-row lg:max-w-7xl">
+                          <div className="mb-3 mr-4 flex flex-col items-start md:mb-0 md:flex-row md:items-center">
+                            <div
+                              className="mb-2 flex items-center border-gray-200 dark:border-gray-600 md:mb-0 md:mr-4 md:border-r md:pr-4"
+                            >
+                              <img src="/img/logo_black.png" className="ml-5 mr-3 h-6" alt="logo" />
+                            </div>
+                            <p className="flex items-center text-sm font-normal text-gray-800 dark:text-gray-400">
+                              지금 업로드한 자료들에 대한 요약을 확인해보세요!
+                            </p>
+                          </div>
+                          <div className="flex shrink-0 items-center">
+                            <Button onClick={handleSummaryButtonClick} className='bg-blue-500 font-semibold'>요약하기</Button>
+                            <Banner.CollapseButton color="gray" className="border-0 bg-transparent text-gray-500 dark:text-gray-400">
+                              <HiX className="h-4 w-4" />
+                            </Banner.CollapseButton>
+                          </div>
+                        </div>
+                      </Banner>
+                      </>
+                    )}
                     <div className='grid grid-cols-1 md:grid-cols-5 gap-2 ml-3 mr-3 mt-5 mb-5'>
                         {/* 자료 반환한 거 띄우는 위치 */}
                         {fileFinals.map((fileFinals, index) => (
@@ -247,7 +350,7 @@ const ProjectDetail = () => {
                         )}
                         <input type="file" className="file hidden" accept='.png, .jpeg, .pdf' onChange={handleUpload} multiple />
                       </label>
-                      <button className='w-full bg-blue-900 text-white text-xs font-PretendardVariable font-normal rounded-md py-3 mt-4 transition duration-200 ease-in-out cursor-pointer' onClick={handleUploadButtonClick}>업로드 하기</button>
+                      <button className={`w-full text-white text-xs font-PretendardVariable font-normal rounded-md py-3 mt-4 transition duration-200 ease-in-out cursor-pointer ${filePreviews.length? 'bg-blue-600' : 'bg-black'}`} onClick={handleUploadButtonClick}>업로드 하기</button>
                     </div>
                   )}
                 </div>
@@ -321,7 +424,7 @@ const ProjectDetail = () => {
                     )}
                     <input type="file" className="file hidden" accept='.png, .jpeg, .pdf' onChange={handleUpload} multiple />
                   </label>
-                  <button className='w-full bg-blue-900 text-white text-xs font-PretendardVariable font-normal rounded-md py-3 mt-4 transition duration-200 ease-in-out cursor-pointer' onClick={handleUploadButtonClick}>업로드 하기</button>
+                  <button className={`w-full text-white text-xs font-PretendardVariable font-normal rounded-md py-3 mt-4 transition duration-200 ease-in-out cursor-pointer ${filePreviews.length? 'bg-blue-600' : 'bg-black'}`} onClick={handleUploadButtonClick}>업로드 하기</button>
                 </div>
               </div>
             </>

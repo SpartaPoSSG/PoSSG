@@ -19,6 +19,7 @@ function ProjectFile(props: {
                 title: folderInfo.title,
                 file_name: props.file_name
             }
+            console.log(">>>", fileInfo);
 
             await deleteFile(token, fileInfo);
         }

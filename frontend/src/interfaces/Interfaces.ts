@@ -47,10 +47,16 @@ export interface MyFolder {
 
 export interface MyFolders extends Array<MyFolder> {}
 
+export interface MyFolder2 {
+    sector: string;
+    title: string;
+}
+
 export interface MyFolderDetail {
     sector: string;
     title: string;
     files: FileData[];
+    folder_portfolio: string;
 }
 
 export interface MyFolderDetail2 {
@@ -62,4 +68,12 @@ export interface MyFolderDetail2 {
 export interface FileData {
     file: File;
     src: string;
+}
+
+export interface FolderPortfolio {
+    summary: string;
+}
+
+export interface MyPortfolio {
+    file: File;
 }
