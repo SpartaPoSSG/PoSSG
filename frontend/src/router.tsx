@@ -4,6 +4,8 @@ import Home from "./pages/Home";
 import Portfolio from "./pages/Portfolio";
 import NotFound from "./components/NotFound";
 import Login from "./pages/Login";
+import Register from "./pages/Register";
+import ProjectDetail from "./pages/ProjectDetail";
 
 const router = createBrowserRouter([
     {
@@ -22,6 +24,14 @@ const router = createBrowserRouter([
         {
           path: "login",
           element: <Login />,
+        },
+        {
+          path: "register",
+          element: <Register />,
+        },
+        {
+          path: "project-detail/:sector/:folderName",
+          element: <ProjectDetail />,
         },
       ],
     },
