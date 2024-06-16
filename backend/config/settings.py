@@ -183,12 +183,17 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+<<<<<<< HEAD
+AWS_STORAGE_BUCKET_NAME = 'possg'
+AWS_S3_REGION_NAME = 'us-east-2'
+=======
 
 '''
 AWS_ACCESS_KEY_ID = 'your_access_key_id'
 AWS_SECRET_ACCESS_KEY = 'your_secret_access_key'
 AWS_STORAGE_BUCKET_NAME = 'your_bucket_name'
 AWS_S3_REGION_NAME = 'your_aws_region'
+>>>>>>> 092458160cba9640d80d6f3b450fb48044d5724e
 AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
 
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
@@ -197,8 +202,12 @@ DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 ##### 이미지 저장 ######
 import os
 
+<<<<<<< HEAD
+MEDIA_URL = r"C:\Users\LG\OneDrive\사진\출구.JPG"
+=======
 
 MEDIA_URL = '/media/'
+>>>>>>> 092458160cba9640d80d6f3b450fb48044d5724e
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # 커스텀 경로 설정

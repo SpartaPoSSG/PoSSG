@@ -13,6 +13,11 @@
   }
 }
 
+@font-face {
+  font-family: "PretendardVariable";
+  src: url("./font/PretendardVariable.ttf");
+}
+
 .App-header {
   background-color: #282c34;
   min-height: 100vh;
