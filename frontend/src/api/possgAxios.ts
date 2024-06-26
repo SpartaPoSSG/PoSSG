@@ -1,5 +1,5 @@
 import axios, { AxiosResponse, isAxiosError } from "axios";
-import { EmailResponse, Folder, LoginResponse, User, Users, SuccessResponse, MyFolderDetail, MyFolderDetail2, MySectors, MyFolder2, FolderPortfolio, MyPortfolio} from "../interfaces/Interfaces";
+import { EmailResponse, Folder, LoginResponse, User, Users, SuccessResponse, MyFolderDetail, MyFolderDetail2, MySectors, MyFolder2, FolderPortfolio, MyPortfolio, Recommend} from "../interfaces/Interfaces";
 
 
 const possgAxios = axios.create({
@@ -269,7 +269,7 @@ export const makePortfolio = async (
     token: string,
 ): Promise<AxiosResponse<MyPortfolio, any> | null> => {
     try {
-        const response = await possgAxios.post(
+        const response = await possgAxios.get(
             "community/make-portfolio",
             { headers: { Authorization: `Bearer ${token}` }},
         );
@@ -304,6 +304,22 @@ export const getPortfolio = async (
     }
 };
 
-
-
 // 직무추천
+export const getRecommend = async (
+    token: string,
+): Promise<AxiosResponse<Recommend, any> | null> => {
+    try {
+        const response = await possgAxios.get(
+            "community/recommend",
+            { headers: { Authorization: `Bearer ${token}` }},
+        );
+        return response;
+    } catch (error) {
+        if(isAxiosError<Recommend>(error)) {
+            console.log(`Error: ${error.response?.status} ${error.message}`);
+            return null;
+        } else {
+            return null;
+        }
+    }
+};

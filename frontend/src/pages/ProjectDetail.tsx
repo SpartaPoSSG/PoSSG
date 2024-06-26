@@ -163,6 +163,13 @@ const ProjectDetail = () => {
   const fetchFiles = async () => {
     console.log(sector);
     if (token) {
+        const successResponse = await getMyProjectFiles(token, folder);
+        console.log(successResponse?.data);
+        
+        if (successResponse && successResponse.data) {
+          if (successResponse.data.files.length > 0) {
+            setExist(true);
+          }
       const successResponse = await getMyProjectFiles(token, folder);
       console.log(successResponse?.data);
 
