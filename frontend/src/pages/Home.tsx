@@ -30,7 +30,7 @@ const Home = () => {
     const [containerWidth, setContainerWidth] = useState<number>(0);
     const [error, setError] = useState<string | null>(null);
     const [loggedIn, setLoggedIn] = useState(false);
-    const [showHeroSection, setShowHeroSection] = useState(true);
+    const [showHeroSection, setShowHeroSection] = useState(false);
 
     const fetchFolders = async () => {
         if (token) {
