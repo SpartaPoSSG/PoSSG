@@ -255,21 +255,13 @@ export const getFolderPortfolio = async (
     token: string,
     folder: MyFolder2
 ): Promise<AxiosResponse<FolderPortfolio, any> | null> => {
-    try {
         const response = await possgAxios.post(
             "community/folder-portfolio",
             folder,
             { headers: { Authorization: `Bearer ${token}` }},
         );
         return response;
-    } catch (error) {
-        if(isAxiosError<FolderPortfolio>(error)) {
-            console.log(`Error: ${error.response?.status} ${error.message}`);
-            return null;
-        } else {
-            return null;
-        }
-    }
+    
 };
 
 // 내 포트폴리오 생성
