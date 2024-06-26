@@ -394,19 +394,78 @@ const ProjectDetail = () => {
           </div>
         </div>
         {showPopup && (
-          <>
-            <div className="fixed top-0 left-0 w-full h-full bg-gray-500 bg-opacity-60 flex items-center justify-center">
-              {/* 모달 백그라운드 */}
-            </div>
-            <div ref={popupRef} className={`mx-auto h-3/7 bg-white rounded-lg p-6 z-50 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2`}>
-              {/* 모달 콘텐츠 */}
-              {/* <ModalPopUp
-              onClose={handlePopUpClose}
-              onConfirm={handlePopUpConfirm}
-            /> */}
-            </div>
-          </>
-        )}
+            <>
+              <div className="fixed top-0 left-0 w-full h-full bg-gray-500 bg-opacity-60 flex items-center justify-center">
+                {/* 모달 백그라운드 */}
+              </div>
+              <div ref={popupRef} className={`mx-auto h-3/7 bg-white rounded-lg border-1 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 items-center justify-center mt-4 z-1`} style={{ width: containerWidth }}>
+                <div className='m-4'>
+                  <label
+                    className={`bg-white rounded-lg outline-dashed outline-2 outline-gray-300 hover:outline-gray-500 p-70 flex flex-col justify-center items-center cursor-pointer${isActive ? ' bg-efeef3 border-111' : ''}`}
+                    onDragEnter={handleDragStart}
+                    onDragOver={handleDragOver}
+                    onDragLeave={handleDragEnd}
+                    onDrop={handleDrop}
+                  >
+                    {filePreviews.length ? (
+                      <>
+                      <div className='grid grid-cols-1 md:grid-cols-5 gap-2 ml-3 mr-3 mt-5 mb-5'>
+                        {filePreviews.map((filePreviews, index) => (
+                          <div key={index} className='flex flex-col w-full pb-1'>
+                            {filePreviews.file.type === 'application/pdf' && (
+                              <Document
+                                file={filePreviews.file}
+                                className={'hidden'}
+                                onLoadSuccess={(pdf) => {
+                                  pdf.getPage(1).then((page) => {
+                                    const viewport = page.getViewport({ scale: 1 });
+                                    const canvas = document.createElement('canvas');
+                                    const canvasContext = canvas.getContext('2d');
+                                    if (canvasContext) {
+                                      canvas.width = viewport.width;
+                                      canvas.height = viewport.height;
+                                      page.render({ canvasContext, viewport }).promise.then(() => {
+                                        canvas.toBlob((blob) => {
+                                          if (blob) {
+                                            const imageUrl = URL.createObjectURL(blob);
+                                            setFilePreviews(prevFilePreviews => {
+                                              const updatedPreviews = [...prevFilePreviews];
+                                              updatedPreviews[index].preview = imageUrl;
+                                              return updatedPreviews;
+                                            });
+                                          }
+                                        });
+                                      });
+                                    }
+                                  });
+                                }}
+                              >
+                                <Page pageNumber={1} />
+                              </Document>
+                            )}
+                            <ProjectPreview
+                              name={filePreviews.name}
+                              src={filePreviews.preview}
+                              onDelete={() => handlePreviewDelete(index)}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                      </>
+                    ) : (
+                      <>
+                        <Logo />
+                        <p className="font-medium font-PretendardVariable text-lg my-20 mb-10">클릭 혹은 여러 파일을 이곳에 드롭하세요!</p>
+                        <p className="mb-32 font-PretendardVariable text-sm">파일당 최대 3MB</p>
+                      </>
+                    )}
+                    <input type="file" className="file hidden" accept='.png, .jpeg, .pdf' onChange={handleUpload} multiple />
+                  </label>
+                  <button className={`w-full text-white text-xs font-PretendardVariable font-normal rounded-md py-3 mt-4 transition duration-200 ease-in-out cursor-pointer ${filePreviews.length? 'bg-blue-600' : 'bg-black'}`} onClick={handleUploadButtonClick}>업로드 하기</button>
+                </div>
+              </div>
+            </>
+          )}
       </div>
     </>
   );
