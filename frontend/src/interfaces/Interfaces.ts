@@ -77,3 +77,6 @@ export interface FolderPortfolio {
 export interface MyPortfolio {
     file: File;
 }
+export interface Recommend {
+    recommend: string;
+}

@@ -148,6 +148,7 @@ const ProjectDetail = () => {
         console.log(successResponse?.data);
         
         if (successResponse && successResponse.data) {
+          // console.log(typeof successResponse.data.files)
           if (successResponse.data.files.length > 0) {
             setExist(true);
           }
