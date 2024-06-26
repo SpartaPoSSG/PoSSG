@@ -8,8 +8,7 @@ from PIL import Image as PILImage
 
 # 이미지들이 담긴 여러 폴더 경로
 IMAGE_FOLDER_PATHS = [
-    r"C:\Users\LG\OneDrive\사진\test",
-    r"C:\Users\LG\OneDrive\문서\카카오톡 받은 파일\portfotest1",
+    "/home/honglee0317/possg/backend/media/folders/대외활동/ssssaa"
     # 추가 폴더 경로 계속 추가
 ]
 

@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 from datetime import timedelta
 import os
+import sys
+from config.my_settings import *
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -21,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-^6i9wpu(o&0+(l_4^yy7%y1o5*8nzow!3m$ib5y%45unp-4a)g'
+SECRET_KEY = django_key
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -42,7 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'common',
     'possg',
-    
+    'django_extensions',
     # 설치한 라이브러리
     'corsheaders',
     'rest_framework',
@@ -183,10 +185,10 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-<<<<<<< HEAD
+
 AWS_STORAGE_BUCKET_NAME = 'possg'
 AWS_S3_REGION_NAME = 'us-east-2'
-=======
+
 
 '''
 AWS_ACCESS_KEY_ID = 'your_access_key_id'
@@ -202,12 +204,7 @@ DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 ##### 이미지 저장 ######
 import os
 
-<<<<<<< HEAD
-MEDIA_URL = r"C:\Users\LG\OneDrive\사진\출구.JPG"
-=======
 
-MEDIA_URL = '/media/'
->>>>>>> 092458160cba9640d80d6f3b450fb48044d5724e
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # 커스텀 경로 설정
