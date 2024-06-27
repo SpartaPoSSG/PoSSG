@@ -30,6 +30,7 @@ const Portfolio = () => {
         console.log(myPortfolio)
         console.log(typeof successResponse);
         console.log(typeof successResponse.data);
+        console.log(typeof successResponse.data.file);
         setIsLoading(false);
       }
     }

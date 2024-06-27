@@ -12,6 +12,7 @@ import { Banner, Button, Dropdown, Spinner } from 'flowbite-react';
 import { FaWandMagicSparkles } from "react-icons/fa6";
 import { HiX } from 'react-icons/hi';
 import { MdAnnouncement } from 'react-icons/md';
+import Loading3 from '../components/Loading3'; // Loading3 컴포넌트 추가
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 
@@ -31,6 +32,9 @@ const ProjectDetail = () => {
   //const [dropdownOpen, setDropdownOpen] = useState(false); // 드롭다운 상태 추가
   const [showDetails, setShowDetails] = useState(false);
   const [isLoadingSummary, setIsLoadingSummary] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false); // isLoading 상태 추가
+
+
 
 
   const popupRef = useRef<HTMLDivElement>(null);
@@ -98,8 +102,10 @@ const ProjectDetail = () => {
     setFilePreviews(prevFilePreviews => prevFilePreviews.filter((_, i) => i !== index));
   };
 
-  const handleUploadButtonClick = async () => {
+   const handleUploadButtonClick = async () => {
     if (token) {
+      setIsLoading(true); // 파일 업로드 시작 시 isLoading을 true로 설정
+
       const formData = new FormData();
       formData.append('sector', sector);
       formData.append('title', folderName);
@@ -116,6 +122,7 @@ const ProjectDetail = () => {
       setExist(true);
       setFileFinals(prevFileFinals => [...prevFileFinals, ...filePreviews]);
       setFilePreviews([]);
+      setIsLoading(false); // 파일 업로드 종료 시 isLoading을 false로 설정
     }
   };
 
@@ -213,6 +220,7 @@ const ProjectDetail = () => {
   return (
     <>
       <div className='flex w-screen justify-center self-stretch bg-white text-gray-700'>
+      {isLoading && <Loading3 />} {/* isLoading이 true일 때 Loading3 컴포넌트를 렌더링합니다 */}
         <div className='flex flex-1 flex-col md:flex-row box-border max-w-screen-xl items-center justify-start px-5 md:px-20 xl:px-10 pt-20 pb-20'>
           <div className='flex-1 flex-grow-4 self-start max-w-none prose-lg mx-4 text-gray-700'>
             <div id="content-container" className='mx-auto md:w-[80%]'>
