@@ -12,7 +12,7 @@ import { Banner, Button, Dropdown, Spinner } from 'flowbite-react';
 import { FaWandMagicSparkles } from "react-icons/fa6";
 import { HiX } from 'react-icons/hi';
 import { MdAnnouncement } from 'react-icons/md';
-import Loading3 from '../components/Loading3'; // Loading3 컴포넌트 추가
+import UploadLoading from '../components/UploadLoading';
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 
@@ -220,7 +220,9 @@ const ProjectDetail = () => {
   return (
     <>
       <div className='flex w-screen justify-center self-stretch bg-white text-gray-700'>
-      {isLoading && <Loading3 />} {/* isLoading이 true일 때 Loading3 컴포넌트를 렌더링합니다 */}
+      {isLoading && (
+        <UploadLoading />
+      )}
         <div className='flex flex-1 flex-col md:flex-row box-border max-w-screen-xl items-center justify-start px-5 md:px-20 xl:px-10 pt-20 pb-20'>
           <div className='flex-1 flex-grow-4 self-start max-w-none prose-lg mx-4 text-gray-700'>
             <div id="content-container" className='mx-auto md:w-[80%]'>
