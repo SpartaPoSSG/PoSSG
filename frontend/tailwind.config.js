@@ -21,6 +21,7 @@ module.exports = {
       }
     },
     fontFamily: {
+      'PretendardVariable': ['PretendardVariable'],
       'seoleim': ['seolleimcool-bold']
     }
   },
