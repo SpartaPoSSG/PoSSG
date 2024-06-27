@@ -34,7 +34,7 @@ const Login = () => {
 
   return (
     <>
-      <div className='bg-blue-500 w-screen min-h-screen'>
+      <div className='bg-blue-600 w-screen min-h-screen'>
         <section className="dark:bg-gray-900">
           <div className='flex justify-between pt-10 px-20'>
             <div className='text-white text-3xl leading-snug flex flex-col justify-center min-h-screen'>
@@ -94,7 +94,7 @@ const Login = () => {
                     <br />
                     <button
                       type="submit"
-                      className="w-full flex justify-center rounded-lg bg-blue-500 py-3 px-4 text-lg font-semibold leading-tight text-white shadow-md transition duration-200 ease-in-out cursor-pointer mb-2">
+                      className="w-full flex justify-center rounded-lg bg-blue-600 py-3 px-4 text-lg font-semibold leading-tight text-white shadow-md transition duration-200 ease-in-out cursor-pointer mb-2">
                       로그인
                     </button>
                     <p className="mt-10 text-center text-sm text-gray-500">
