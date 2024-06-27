@@ -75,7 +75,18 @@ export interface FolderPortfolio {
 }
 
 export interface MyPortfolio {
-    file: File;
+    result: portfolioInfo[];
+}
+
+export interface portfolioInfo {
+    [key: number]: {
+        sector: string;
+        folderName: string;
+        results: string;
+    };
+    // sector: string;
+    // folderName: string;
+    // results: string;
 }
 
 export interface Recommend {

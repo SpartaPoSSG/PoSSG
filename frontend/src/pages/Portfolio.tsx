@@ -5,32 +5,25 @@ import { getPortfolio, makePortfolio, getRecommend } from '../api/possgAxios';
 import { Document, Page, pdfjs } from "react-pdf";
 import Loading1 from '../components/Loading1';
 import Loading2 from '../components/Loading2';
+import { MyPortfolio, portfolioInfo } from '../interfaces/Interfaces';
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 const Portfolio = () => {
   const token = localStorage.getItem('token');
   const [isLoading, setIsLoading] = useState<boolean>(true);  // 통합된 로딩 및 존재 상태 변수
-  const [myPortfolio, setMyPortfolio] = useState<File | null>(null);
+  const [myPortfolio, setMyPortfolio] = useState<MyPortfolio>();
   const [recommend, setRecommend] = useState<string>("");
   const [isRecommendLoading, setIsRecommendLoading] = useState<boolean>(false); // 직무 추천 로딩 상태 추가
 
   const makePortfolioButton = async () => {
     setIsLoading(true);
-    console.log("포트폴리오 요청 후 로딩 중")
+    console.log("포트폴리오 요청 후 로딩 중");
     if (token) {
       const successResponse = await makePortfolio(token);
-      console.log("포트폴리오 요청 성공")
-      console.log(successResponse)
-      if(successResponse!=null){
-      console.log("successResponse.data:", successResponse.data);
-      }
+      console.log("포트폴리오 요청 성공");
       if (successResponse && successResponse.data) {
-        setMyPortfolio(successResponse.data.file);
-        console.log("portfolio")
-        console.log(myPortfolio)
-        console.log(typeof successResponse);
-        console.log(typeof successResponse.data);
-        console.log(typeof successResponse.data.file);
+        setMyPortfolio(successResponse.data);
+        console.log("Response Data:", successResponse.data);
         setIsLoading(false);
       }
     }
@@ -39,9 +32,10 @@ const Portfolio = () => {
   const fetchFile = async () => {
     if (token) {
       const successResponse = await getPortfolio(token);
-      if (successResponse && successResponse.data.file) {
-        setMyPortfolio(successResponse.data.file);
-        console.log("포트폴리오 받아오기 성공")
+      if (successResponse && successResponse.data) {
+        setMyPortfolio(successResponse.data);
+        console.log(myPortfolio);
+        console.log("Response Data:", successResponse.data);
       }
       setIsLoading(false);  // 로딩 종료
     }
@@ -68,17 +62,18 @@ const Portfolio = () => {
   }, [token]);
 
   const renderPdfDocument = () => {
-    if (myPortfolio) {
-      console.log("화면 띄우기")
-      return (
-        <Document
-          file={myPortfolio}
-          onLoadSuccess={({ numPages }) => console.log(`Loaded ${numPages} pages`)}
-        >
-          <Page pageNumber={1} />
-        </Document>
-      );
-    }
+    console.log(myPortfolio);
+    // if (myPortfolio) {
+    //   console.log("화면 띄우기")
+    //   return (
+    //     <Document
+    //       file={myPortfolio}
+    //       onLoadSuccess={({ numPages }) => console.log(`Loaded ${numPages} pages`)}
+    //     >
+    //       <Page pageNumber={1} />
+    //     </Document>
+    //   );
+    // }
   };
 
   // const renderPdfDocument = () => {
@@ -107,16 +102,23 @@ const Portfolio = () => {
   return (
     <>
       {isLoading && <Loading1 />}
-      {!isLoading && myPortfolio ? (
+      {!isLoading ? (
         <>
-          {renderPdfDocument()}
+          {/* {renderPdfDocument()} */}
+          {myPortfolio && Object.entries(myPortfolio).map(([key, item]) => (
+              <div key={key}>
+                  <h2 className='font-PretendardVariable'>{item.sector}</h2>
+                  <p className='font-PretendardVariable'>{item.folderName}</p>
+                  <pre className='font-PretendardVariable'>{item.results.replaceAll("*", "").replaceAll("#", "")}</pre>
+              </div>
+          ))}
         </>
       ) : (
         <div className='bg-g flex w-screen justify-center self-stretch text-gray-700'>
           <div className='flex flex-1 flex-col md:flex-row box-border max-w-screen-xl items-center justify-start px-5 md:px-20 xl:px-10 pt-20 pb-1'>
             <div className='flex-1 flex-grow-4 self-start max-w-none prose-lg mx-4 text-gray-700'>
               <div className='text-center mx-auto md:w-[80%]'>
-                <div className="bg-gray-50 border border-gray-200 text-xs font-PretendardVariable font-normal rounded-md mt-10 px-3 py-5 mx-3 text-center">
+                <div className="bg-gray-50 border border-gray-200 text-xs font-normal rounded-md mt-10 px-3 py-5 mx-3 text-center">
                   <div className="flex justify-center items-center">
                     <img
                       alt="Character"
