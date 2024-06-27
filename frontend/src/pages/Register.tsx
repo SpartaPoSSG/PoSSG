@@ -37,7 +37,7 @@ const Register = () => {
     setSignupForm({ ...signupForm, [name]: value });
   }
 
-  const handleCheckEmail = async (e: FormEvent) => {
+  const handleCheckEmail = async () => {
     const emailResult = await checkEmail(signupForm.email);
 
     if (emailResult?.data.isExist === true) {
@@ -182,6 +182,7 @@ const Register = () => {
                         required
                       />
                       <button
+                        type="button"
                         className="absolute right-3 top-10 w-15 bg-blue-600 text-white text-xs font-normal rounded-md py-1 px-2 transition duration-200 ease-in-out cursor-pointer"
                         onClick={handleCheckEmail}>중복확인
                       </button>
