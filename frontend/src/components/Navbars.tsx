@@ -8,8 +8,8 @@ import { getUserFromLocalStorage, saveUserToLocalStorage, removeUserFromLocalSto
 
 const theme = {
   active: {
-    on: "text-black tracking-tighter font-PretendardVariable font-semibold dark:text-white md:bg-transparent md:text-black",
-    off: "border-b border-gray-100 text-gray-500 tracking-tighter font-PretendardVariable font-semibold dark:border-gray-700 dark:text-gray-400 md:border-0 md:hover:bg-transparent dark:hover:text-white md:hover:text-black md:dark:hover:text-white",
+    on: "text-black tracking-tighter font-semibold dark:text-white md:bg-transparent md:text-black",
+    off: "border-b border-gray-100 text-gray-500 tracking-tighter font-semibold dark:border-gray-700 dark:text-gray-400 md:border-0 md:hover:bg-transparent dark:hover:text-white md:hover:text-black md:dark:hover:text-white",
   },
 };
 
@@ -63,7 +63,7 @@ function Navbars() {
   };
 
   return (
-    <Navbar border fluid className="fixed left-0 right-0 top-0 z-50">
+    <Navbar border fluid className="fixed left-0 right-0 top-0 z-50 py-3">
       <Navbar.Brand href="/">
         <img
           alt="Logo"
@@ -88,7 +88,7 @@ function Navbars() {
       </div>
       <div className="flex items-center ml-auto gap-x-4 mr-10 list-none">
         {loggedIn && (
-          <div className="flex items-center font-PretendardVariable list-none">
+          <div className="flex items-center list-none">
               <div className='flex w-full font-bold'>{userInfo?.nickname}</div>&nbsp;
               <span className='list-none font-semibold'>님</span>&nbsp;&nbsp;
           </div>

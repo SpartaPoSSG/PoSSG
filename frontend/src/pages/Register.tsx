@@ -1,8 +1,12 @@
 import React, { useState, FormEvent, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { checkEmail, register } from '../api/possgAxios';
+import { Button, Modal } from 'flowbite-react';
+import { HiOutlineExclamationCircle } from 'react-icons/hi';
 
 const Register = () => {
+  const [openModal, setOpenModal] = useState(false);
+  const [openFailModal, setOpenFailModal] = useState(false);
   const [signupForm, setSignupForm] = useState({
     email: "",
     nickname: "",
@@ -122,15 +126,22 @@ const Register = () => {
       const registerResult = await register(signupForm.email, signupForm.password, signupForm.nickname);
 
       if (registerResult) {
-        navigate('/login');
+        setOpenModal(true);
       } else {
+        setOpenFailModal(false);
         console.error('register fail');
       }
     } else {
+      setOpenFailModal(false);
       console.error('register fail');
       return;
     }
   };
+
+  const handleSuccessPopUp = () => {
+    setOpenModal(false);
+    if (openFailModal) navigate('/login');
+  }
 
 
   return (
@@ -171,7 +182,7 @@ const Register = () => {
                         required
                       />
                       <button
-                        className="absolute right-3 top-10 w-15 bg-blue-600 text-white text-xs font-PretendardVariable font-normal rounded-md py-1 px-2 transition duration-200 ease-in-out cursor-pointer"
+                        className="absolute right-3 top-10 w-15 bg-blue-600 text-white text-xs font-normal rounded-md py-1 px-2 transition duration-200 ease-in-out cursor-pointer"
                         onClick={handleCheckEmail}>중복확인
                       </button>
                       <p className={`text-gray-500 sm:text-sm ml-2 mt-1`}>
@@ -242,6 +253,7 @@ const Register = () => {
                     </div>
                     <button
                       type="submit"
+                      onClick={() => setOpenModal(true)}
                       className="w-full flex justify-center rounded-lg bg-blue-600 py-3 px-4 text-lg font-semibold leading-tight text-white shadow-md transition duration-200 ease-in-out cursor-pointer mb-2">
                       회원가입
                     </button>
@@ -256,6 +268,27 @@ const Register = () => {
           </div>
         </section>
       </div>
+
+      <Modal show={openModal} size="md" onClose={() => setOpenModal(false)} popup>
+        <div className='fixed top-20 left-0 w-full h-full bg-gray-500 bg-opacity-60'></div>
+            <div className='flex items-center justify-center fixed inset-0 opacity-100'>
+                <div className='z-10 bg-white rounded-lg border-solid border-black-500 p-70 flex flex-col justify-center items-center'>
+                    <Modal.Body>
+                    <div className="text-center px-10">
+                        <HiOutlineExclamationCircle className="mx-auto mb-4 h-14 w-14 text-gray-400 dark:text-black-200" />
+                        <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400 shadow-3xl">
+                            {openFailModal ? "포쓱의 회원이 되신 걸 환영합니다!" : "회원가입에 실패했습니다"}
+                        </h3>
+                        <div className="flex justify-center gap-4">
+                            <Button className="bg-gray-100 text-black w-20 hover:bg-blue-600 hover:text-white" onClick={handleSuccessPopUp}>
+                                확인
+                            </Button>
+                        </div>
+                    </div>
+                </Modal.Body>
+            </div>
+        </div>
+      </Modal>
     </>
   );
 }
