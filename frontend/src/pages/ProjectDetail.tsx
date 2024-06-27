@@ -170,13 +170,6 @@ const ProjectDetail = () => {
           if (successResponse.data.files.length > 0) {
             setExist(true);
           }
-      const successResponse = await getMyProjectFiles(token, folder);
-      console.log(successResponse?.data);
-
-      if (successResponse && successResponse.data) {
-        if (successResponse.data.files.length > 0) {
-          setExist(true);
-        }
 
         if (successResponse.data.folder_portfolio) {
           setFolderPortfolio(successResponse.data.folder_portfolio);
