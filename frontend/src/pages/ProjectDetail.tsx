@@ -28,6 +28,10 @@ const ProjectDetail = () => {
   const [showSummary, setShowSummary] = useState<boolean>(false);
   const [isPortfolioExist, setPortfolioExist] = useState<boolean>(false);
   const [containerWidth, setContainerWidth] = useState<number>(0);
+  //const [dropdownOpen, setDropdownOpen] = useState(false); // 드롭다운 상태 추가
+  const [showDetails, setShowDetails] = useState(false);
+  const [isLoadingSummary, setIsLoadingSummary] = useState<boolean>(false);
+
 
   const popupRef = useRef<HTMLDivElement>(null);
   const token = localStorage.getItem('token');
@@ -46,7 +50,11 @@ const ProjectDetail = () => {
       />
     </svg>
   );
-  
+
+  const toggleDetails = () => {
+    setShowDetails(!showDetails);
+  };
+
   const handleDragStart = (e: React.DragEvent<HTMLLabelElement>) => {
     e.preventDefault();
     setActive(true);
@@ -95,7 +103,7 @@ const ProjectDetail = () => {
       const formData = new FormData();
       formData.append('sector', sector);
       formData.append('title', folderName);
-      
+
       filePreviews.forEach(({ file }) => {
         formData.append('files', file);
       });
@@ -124,22 +132,33 @@ const ProjectDetail = () => {
 
   const handleSummaryButtonClick = async () => {
     setShowSummary(true);
-
+    setIsLoadingSummary(true); // 요약 로딩 상태 시작
+  
+    // 2초 후에 로딩을 종료하고 요약을 표시하는 코드 추가
+    setTimeout(() => {
+      setIsLoadingSummary(false); // 요약 로딩 상태 종료
+      setPortfolioExist(true); // 요약 정보가 존재한다고 설정
+    }, 2000);
+  
     if (folderPortfolio) {
       setPortfolioExist(true);
+      setIsLoadingSummary(false); // 요약 로딩 상태 종료
     } else {
       setPortfolioExist(true);
-
+  
       if (token) {
         const folderPortfolioResponse = await getFolderPortfolio(token, folder);
-
+  
         if (folderPortfolioResponse && folderPortfolioResponse.data.summary) {
           setFolderPortfolio(folderPortfolioResponse.data.summary);
           setPortfolioExist(true);
         }
+        setIsLoadingSummary(false); // 요약 로딩 상태 종료
       }
     }
-  }
+  };
+  
+
 
   const fetchFiles = async () => {
     console.log(sector);
@@ -152,18 +171,18 @@ const ProjectDetail = () => {
             setExist(true);
           }
 
-          if (successResponse.data.folder_portfolio) {
-            setFolderPortfolio(successResponse.data.folder_portfolio);
-            setShowSummary(true);
-          }
-          
-          const files = successResponse.data.files.map(({ file, src }) => ({
-              file: file,
-              preview: src,
-              name: file.toString().split('/').pop()?.replace(/_/g, ' ') as string
-          }));
-          setFileFinals(files);
+        if (successResponse.data.folder_portfolio) {
+          setFolderPortfolio(successResponse.data.folder_portfolio);
+          setShowSummary(true);
         }
+
+        const files = successResponse.data.files.map(({ file, src }) => ({
+          file: file,
+          preview: src,
+          name: file.toString().split('/').pop()?.replace(/_/g, ' ') as string
+        }));
+        setFileFinals(files);
+      }
     }
   };
 
@@ -190,50 +209,65 @@ const ProjectDetail = () => {
       document.removeEventListener('mousedown', handleOutsideClick);
     };
   }, []);
-  
 
   return (
     <>
       <div className='flex w-screen justify-center self-stretch bg-white text-gray-700'>
-          <div className='flex flex-1 flex-col md:flex-row box-border max-w-screen-xl items-center justify-start px-5 md:px-20 xl:px-10 pt-20 pb-20'>
-              <div className='flex-1 flex-grow-4 self-start max-w-none prose-lg mx-4 text-gray-700'>
-                <div id="content-container" className='mx-auto md:w-[80%]'>
-                  <div className='flex justify-between items-center pt-12 pb-2 border-b border-gray-500'>
-                    <p className='text-xl font-PretendardVariable font-semibold ml-3'>{sector}&nbsp;/&nbsp;{folderName}</p>
-                    <div className='flex items-center'>
-                        <Button
-                          className='text-black border-slate-300 custom-gradient-hover from-gradient-start to-gradient-end h-8 font-semibold mr-3'
-                          onClick={handleSummaryButtonClick}
-                        >
-                            <FaWandMagicSparkles />&nbsp;
-                            <p className='text-xs'>요약</p>
-                        </Button>
-                        <button
-                          type="submit"
-                          className="bg-black text-white text-xs font-PretendardVariable font-normal rounded-md py-2 px-5 transition duration-200 ease-in-out cursor-pointer"
-                          onClick={handlePopUpButtonClick}
-                        >
-                        파일 업로드
-                        </button>
-                    </div>
-                  </div>
-                  <div className='mt-3'>
-                    {showSummary ? (
+        <div className='flex flex-1 flex-col md:flex-row box-border max-w-screen-xl items-center justify-start px-5 md:px-20 xl:px-10 pt-20 pb-20'>
+          <div className='flex-1 flex-grow-4 self-start max-w-none prose-lg mx-4 text-gray-700'>
+            <div id="content-container" className='mx-auto md:w-[80%]'>
+              <div className='flex justify-between items-center pt-12 pb-2 border-b border-gray-500'>
+                <p className='text-xl font-PretendardVariable font-semibold ml-3'>{sector}&nbsp;/&nbsp;{folderName}</p>
+                <div className='flex items-center'>
+                  <Button
+                    className='text-black border-slate-300 custom-gradient-hover from-gradient-start to-gradient-end h-8 font-semibold mr-3'
+                    onClick={handleSummaryButtonClick}
+                  >
+                    <FaWandMagicSparkles />&nbsp;
+                    <p className='text-xs'>요약</p>
+                  </Button>
+                  <button
+                    type="submit"
+                    className="bg-black text-white text-xs font-PretendardVariable font-normal rounded-md py-2 px-5 transition duration-200 ease-in-out cursor-pointer"
+                    onClick={handlePopUpButtonClick}
+                  >
+                    파일 업로드
+                  </button>
+                </div>
+              </div>
+              <div className='mt-3'>
+                {showSummary ? (
+                  <>
+                    {isLoadingSummary ? (
+                      <div className="flex justify-center items-center p-4 bg-gray-100 rounded-2xl shadow mb-4 font-semibold">
+                        <Spinner aria-label="Loading spinner" className="mr-3" />
+                        <span>로딩 중입니다. 잠시만 기다려주세요.</span>
+                      </div>
+                    ) : isPortfolioExist ? (
                       <>
-                      {isPortfolioExist ? (
-                        <>
-                        <Dropdown 
-                          label={<span className="text-black text-lg">내 폴더 요약 정보 확인하기!</span>} 
-                          className='border-0 bg-blue-100'
+                        <button
+                          className="border-0 bg-blue-500 text-white text-lg p-2 rounded-xl font-semibold"
                           style={{ width: containerWidth }}
+                          onClick={toggleDetails}
                         >
-                          <Dropdown.Header style={{ width: containerWidth }}>
-                            <span className="block text-sm">{folderPortfolio}</span>
-                          </Dropdown.Header>
-                        </Dropdown>
-                        </>
-                      ) : (
-                        <>
+                          내 폴더 요약 정보 확인하기!
+                        </button>
+                        {showDetails && (
+                          <div className="pl-10 pr-10 pt-1 pb-3 bg-gray-100 rounded-xl shadow mb-4">
+                            <div className="mt-3" style={{ width: containerWidth }}>
+                              <span className="block text-sm">
+                                1. 프로젝트명: 웹사이트 리뉴얼<br />
+                                2. 주요 역할: 프론트엔드 개발<br />
+                                3. 사용 기술: React, TypeScript, TailwindCSS<br />
+                                4. 성과: 페이지 로딩 속도 50% 개선<br />
+                                5. 기간: 2023년 1월 - 2023년 3월<br />
+                              </span>
+                            </div>
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      <>
                         <Banner className='ml-3 mr-3'>
                           <div className="flex w-full flex-col justify-between bg-blue-100 rounded-lg border border-gray-100 bg-white p-4 shadow-sm dark:border-gray-600 dark:bg-gray-700 md:flex-row lg:max-w-7xl">
                             <div className="mx-auto flex items-center">
@@ -247,57 +281,58 @@ const ProjectDetail = () => {
                             </div>
                           </div>
                         </Banner>
-                        </>
-                      )}
-                      </>
-                    ) : (
-                      <>
-                      <Banner className='ml-3 mr-3'>
-                        <div className="flex w-full flex-col justify-between bg-blue-100 rounded-lg border border-gray-100 bg-white p-4 shadow-sm dark:border-gray-600 dark:bg-gray-700 md:flex-row lg:max-w-7xl">
-                          <div className="mb-3 mr-4 flex flex-col items-start md:mb-0 md:flex-row md:items-center">
-                            <div
-                              className="mb-2 flex items-center border-gray-200 dark:border-gray-600 md:mb-0 md:mr-4 md:border-r md:pr-4"
-                            >
-                              <img src="/img/logo_black.png" className="ml-5 mr-3 h-6" alt="logo" />
-                            </div>
-                            <p className="flex items-center text-sm font-normal text-gray-800 dark:text-gray-400">
-                              지금 업로드한 자료들에 대한 요약을 확인해보세요!
-                            </p>
-                          </div>
-                          <div className="flex shrink-0 items-center">
-                            <Button onClick={handleSummaryButtonClick} className='bg-blue-500 font-semibold'>요약하기</Button>
-                            <Banner.CollapseButton color="gray" className="border-0 bg-transparent text-gray-500 dark:text-gray-400">
-                              <HiX className="h-4 w-4" />
-                            </Banner.CollapseButton>
-                          </div>
-                        </div>
-                      </Banner>
                       </>
                     )}
-                    <div className='grid grid-cols-1 md:grid-cols-5 gap-2 ml-3 mr-3 mt-5 mb-5'>
-                        {/* 자료 반환한 거 띄우는 위치 */}
-                        {fileFinals.map((fileFinals, index) => (
-                          <div key={index} className='flex flex-col w-full pb-1'>
-                            <ProjectFile
-                              file_name={fileFinals.file.name}
-                              name={fileFinals.name}
-                              src={fileFinals.preview}
-                            />
+                  </>
+                ) : (
+                  <>
+                    <Banner className='ml-3 mr-3'>
+                      <div className="flex w-full flex-col justify-between bg-blue-100 rounded-lg border border-gray-100 bg-white p-4 shadow-sm dark:border-gray-600 dark:bg-gray-700 md:flex-row lg:max-w-7xl">
+                        <div className="mb-3 mr-4 flex flex-col items-start md:mb-0 md:flex-row md:items-center">
+                          <div
+                            className="mb-2 flex items-center border-gray-200 dark:border-gray-600 md:mb-0 md:mr-4 md:border-r md:pr-4"
+                          >
+                            <img src="/img/logo_black.png" className="ml-5 mr-3 h-6" alt="logo" />
                           </div>
-                        ))}
+                          <p className="flex items-center text-sm font-normal text-gray-800 dark:text-gray-400">
+                            지금 업로드한 자료들에 대한 요약을 확인해보세요!
+                          </p>
+                        </div>
+                        <div className="flex shrink-0 items-center">
+                          <Button onClick={handleSummaryButtonClick} className='bg-blue-500 font-semibold'>요약하기</Button>
+                          <Banner.CollapseButton color="gray" className="border-0 bg-transparent text-gray-500 dark:text-gray-400">
+                            <HiX className="h-4 w-4" />
+                          </Banner.CollapseButton>
+                        </div>
+                      </div>
+                    </Banner>
+                  </>
+                )}
+              </div>
+              <div className='mt-5'>
+                {/* 자료 반환한 거 띄우는 위치 */}
+                <div className='grid grid-cols-1 md:grid-cols-5 gap-2 ml-3 mr-3 mt-5 mb-5'>
+                  {fileFinals.map((fileFinals, index) => (
+                    <div key={index} className='flex flex-col w-full pb-1'>
+                      <ProjectFile
+                        file_name={fileFinals.file.name}
+                        name={fileFinals.name}
+                        src={fileFinals.preview}
+                      />
                     </div>
-                  </div>
-                  {!isExist && (
-                    <div className='mt-3'>
-                      <label
-                        className={`bg-white rounded-lg outline-dashed outline-2 outline-gray-300 hover:outline-gray-500 p-70 flex flex-col justify-center items-center cursor-pointer${isActive ? ' bg-efeef3 border-111' : ''}`}
-                        onDragEnter={handleDragStart}
-                        onDragOver={handleDragOver}
-                        onDragLeave={handleDragEnd}
-                        onDrop={handleDrop}
-                      >
-                        {filePreviews.length ? (
-                          <>
+                  ))}
+                </div>
+                {!isExist && (
+                  <div className='mt-5'>
+                    <label
+                      className={`bg-white rounded-lg outline-dashed outline-2 outline-gray-300 hover:outline-gray-500 p-70 flex flex-col justify-center items-center cursor-pointer${isActive ? ' bg-efeef3 border-111' : ''}`}
+                      onDragEnter={handleDragStart}
+                      onDragOver={handleDragOver}
+                      onDragLeave={handleDragEnd}
+                      onDrop={handleDrop}
+                    >
+                      {filePreviews.length ? (
+                        <>
                           <div className='grid grid-cols-1 md:grid-cols-5 gap-2 ml-3 mr-3 mt-5 mb-5'>
                             {filePreviews.map((filePreviews, index) => (
                               <div key={index} className='flex flex-col w-full pb-1'>
@@ -340,23 +375,25 @@ const ProjectDetail = () => {
                               </div>
                             ))}
                           </div>
-                          </>
-                        ) : (
-                          <>
-                            <Logo />
-                            <p className="font-medium font-PretendardVariable text-lg my-20 mb-10">클릭 혹은 여러 파일을 이곳에 드롭하세요!</p>
-                            <p className="mb-32 font-PretendardVariable text-sm">파일당 최대 3MB</p>
-                          </>
-                        )}
-                        <input type="file" className="file hidden" accept='.png, .jpeg, .pdf' onChange={handleUpload} multiple />
-                      </label>
-                      <button className={`w-full text-white text-xs font-PretendardVariable font-normal rounded-md py-3 mt-4 transition duration-200 ease-in-out cursor-pointer ${filePreviews.length? 'bg-blue-600' : 'bg-black'}`} onClick={handleUploadButtonClick}>업로드 하기</button>
-                    </div>
-                  )}
-                </div>
+                        </>
+                      ) : (
+                        <>
+                          <Logo />
+                          <p className="font-medium font-PretendardVariable text-lg my-20 mb-10">클릭 혹은 여러 파일을 이곳에 드롭하세요!</p>
+                          <p className="mb-3 font-PretendardVariable text-sm text-blue-500">JPG,JPEG,PNG,PDF 형식만 첨부 가능합니다</p>
+                          <p className="mb-32 font-PretendardVariable text-sm">파일당 최대 3MB</p>
+                        </>
+                      )}
+                      <input type="file" className="file hidden" accept='.png, .jpeg, .pdf,.jpg' onChange={handleUpload} multiple />
+                    </label>
+                    <button className={`w-full text-white text-xs font-PretendardVariable font-normal rounded-md py-3 mt-4 transition duration-200 ease-in-out cursor-pointer ${filePreviews.length ? 'bg-blue-600' : 'bg-black'}`} onClick={handleUploadButtonClick}>업로드 하기</button>
+                  </div>
+                )}
               </div>
+            </div>
           </div>
-          {showPopup && (
+        </div>
+        {showPopup && (
             <>
               <div className="fixed top-0 left-0 w-full h-full bg-gray-500 bg-opacity-60 flex items-center justify-center">
                 {/* 모달 백그라운드 */}
@@ -430,9 +467,7 @@ const ProjectDetail = () => {
             </>
           )}
       </div>
-      <Footer />
     </>
   );
-};
-
+}
 export default ProjectDetail;
