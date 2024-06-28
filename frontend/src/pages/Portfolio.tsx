@@ -14,6 +14,8 @@ const Portfolio = () => {
   const [recommend, setRecommend] = useState<string[]>();
   const [isRecommendLoading, setIsRecommendLoading] = useState<boolean>(false); // 직무 추천 로딩 상태 추가
   const [groupedPortfolio, setGroupedPortfolio] = useState<GroupedPortfolio>({});
+  const [showHeroSection, setShowHeroSection] = useState(true);
+  const [loggedIn, setLoggedIn] = useState(false);
 
 
   const makePortfolioButton = async () => {
@@ -56,6 +58,18 @@ const Portfolio = () => {
     fetchFile();
     fetchRecommend();
   }, [token]);
+
+  useEffect(() => {
+    if (token) {
+        setLoggedIn(true);
+        setShowHeroSection(false);
+    } else {
+        setLoggedIn(false);
+    }
+
+    fetchFile();
+    fetchRecommend();
+}, [token]);
 
   useEffect(() => {
     if (myPortfolio && myPortfolio.length > 0) {

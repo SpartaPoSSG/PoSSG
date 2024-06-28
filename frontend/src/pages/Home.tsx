@@ -30,7 +30,7 @@ const Home = () => {
     const [containerWidth, setContainerWidth] = useState<number>(0);
     const [error, setError] = useState<string | null>(null);
     const [loggedIn, setLoggedIn] = useState(false);
-    const [showHeroSection, setShowHeroSection] = useState(false);
+    const [showHeroSection, setShowHeroSection] = useState(true);
 
     const fetchFolders = async () => {
         if (token) {
@@ -61,13 +61,10 @@ const Home = () => {
     useEffect(() => {
         if (token) {
             setLoggedIn(true);
-          } else {
-            setLoggedIn(false);
-          }
-      
-          if (loggedIn) {
             setShowHeroSection(false);
-          }
+        } else {
+            setLoggedIn(false);
+        }
 
         fetchFolders();
     }, [token]);
