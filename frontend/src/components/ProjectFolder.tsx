@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import { MdEdit,MdDelete, MdPhoto } from "react-icons/md";
-import { CustomFlowbiteTheme, TextInput, Button, Modal,Alert } from 'flowbite-react';
+import { CustomFlowbiteTheme, TextInput, Button, Modal } from 'flowbite-react';
 import { manageFolder ,uploadThumbnail} from '../api/possgAxios';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { selectedFolderState } from '../atom';
 import { HiOutlineExclamationCircle } from "react-icons/hi";
-import { HiInformationCircle } from "react-icons/hi";
 
 
 function ProjectFolder(props: {
@@ -128,7 +127,6 @@ function ProjectFolder(props: {
             <div className="relative">
                 <img className='h-48 rounded-lg rounded-b-none cursor-pointer object-cover w-full' src={previewSrc} alt="Project Folder" onClick={handleFolderClick}/>
                 <div className="absolute top-2 right-2 flex">
-                    {/* <MdDelete className="text-white bg-black/50 rounded-full p-1 cursor-pointer text-xl" onClick={handleDeleteFolder} /> */}
                     <MdDelete className="text-white bg-black/50 rounded-full p-1 cursor-pointer text-xl" onClick={() => setOpenModal(true)} />
                     <MdPhoto className="text-white bg-black/50 rounded-full p-1 ml-2 cursor-pointer text-xl" onClick={handleFileUpload} />
                 </div>
@@ -184,7 +182,6 @@ function ProjectFolder(props: {
                 </div>
             </Modal>
         </>
-
     );
 }
 
