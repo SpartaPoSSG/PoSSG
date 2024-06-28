@@ -140,7 +140,7 @@ const Register = () => {
 
   const handleSuccessPopUp = () => {
     setOpenModal(false);
-    if (openFailModal) navigate('/login');
+    if (!openFailModal) navigate('/login');
   }
 
 
@@ -278,7 +278,7 @@ const Register = () => {
                     <div className="text-center px-10">
                         <HiOutlineExclamationCircle className="mx-auto mb-4 h-14 w-14 text-gray-400 dark:text-black-200" />
                         <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400 shadow-3xl">
-                            {openFailModal ? "포쓱의 회원이 되신 걸 환영합니다!" : "회원가입에 실패했습니다"}
+                            {openFailModal ? "회원가입에 실패했습니다" : "포쓱의 회원이 되신 걸 환영합니다!"}
                         </h3>
                         <div className="flex justify-center gap-4">
                             <Button className="bg-gray-100 text-black w-20 hover:bg-blue-600 hover:text-white" onClick={handleSuccessPopUp}>
