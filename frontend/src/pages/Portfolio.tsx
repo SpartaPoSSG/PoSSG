@@ -64,28 +64,26 @@ const Portfolio = () => {
         <>
         {myPortfolio ? (
           <>
-          {Object.entries(myPortfolio).map(([key, item]) => (
-            <div className='bg-g flex w-screen justify-center self-stretch text-gray-700'>
-              <div className='flex flex-1 flex-col md:flex-row box-border max-w-screen-xl items-center justify-start px-5 md:px-20 xl:px-10 pt-20 pb-1'>
-                <div className='flex-1 flex-grow-4 self-start max-w-none prose-lg mx-4 text-gray-700'>
-                  <div className='text-center mx-auto md:w-[80%]'>
-                    <div className="bg-gray-50 border border-gray-200 text-xs font-normal rounded-md mt-10 px-3 py-5 mx-3 text-center">
-                      <div className="flex justify-center items-center">
-                        <div key={key}>
-                          <h2 className='font-PretendardVariable'>{item.sector}</h2>
-                          <p className='font-PretendardVariable'>{item.folderName}</p>
-                          <pre className='font-PretendardVariable'>{item.results.replaceAll("*", "").replaceAll("#", "")}</pre>
-                        </div>
+          <div className='bg-gray-100 flex w-full justify-center text-gray-700 pt-20 mt-10'>
+            <div className='flex flex-1 flex-col md:flex-row max-w-7xl items-center justify-start px-5 md:px-20 xl:px-10 py-10'>
+              <div className='flex-1 mx-4 text-gray-700'>
+                <div className='text-start mx-auto md:w-[80%]'>
+                  <div className="bg-white border border-gray-200 rounded-lg p-10 shadow-lg overflow-hidden">
+                    {Object.entries(myPortfolio).map(([key, item]) => (
+                      <div key={key} className="mb-5 last:mb-0">
+                        <h2 className='text-xl font-semibold'>{item.sector}</h2>
+                        {/* <p className='text-md'>{item.folderName}</p> */}
+                        <p className='text-m whitespace-pre-wrap break-words'>{item.results.replaceAll("*", "").replaceAll("#", "")}</p>
                       </div>
-                    </div>
+                    ))}
                   </div>
                 </div>
               </div>
             </div>
-          ))}
+          </div>
           </>
         ) : (
-          <div className='bg-g flex w-screen justify-center self-stretch text-gray-700'>
+          <div className='bg-gray-100 flex w-screen justify-center self-stretch text-gray-700'>
             <div className='flex flex-1 flex-col md:flex-row box-border max-w-screen-xl items-center justify-start px-5 md:px-20 xl:px-10 pt-20 pb-1'>
               <div className='flex-1 flex-grow-4 self-start max-w-none prose-lg mx-4 text-gray-700'>
                 <div className='text-center mx-auto md:w-[80%]'>
@@ -117,9 +115,9 @@ const Portfolio = () => {
       )}
 
       {recommend ? (
-        <div className='flex w-screen justify-center self-stretch pb-20 pt-5'>
+        <div className='flex w-screen justify-center self-stretch pb-20 pt-5 bg-gray-100 '>
           <div className='flex flex-1 flex-col md:flex-row box-border max-w-screen-xl items-center justify-start px-5 md:px-20 xl:px-10 pt-10 pb-20'>
-            <div className="mt-4 pl-10 pr-10 pt-10 pb-10 bg-blue-100 rounded-2xl text-left text-lg mx-auto md:w-[80%]">
+            <div className="mt-4 pl-10 pr-10 pt-10 pb-10 bg-blue-100 shadow-lg rounded-2xl text-left text-lg mx-auto md:w-[80%]">
               {recommend.map((job, index) => (
                 <div key={index}>
                   <strong>추천 직무는 <span className='mx-2 text-blue-600 text-xl'>{job.split('이유:')[0]}</span>입니다</strong>
@@ -131,7 +129,7 @@ const Portfolio = () => {
           </div>
         </div>
       ) : (
-        <div className='flex w-screen justify-center self-stretch text-gray-700'>
+        <div className='flex w-screen justify-center self-stretch text-gray-700 bg-gray-100 '>
           <div className='flex flex-1 flex-col md:flex-row box-border max-w-screen-xl items-center justify-start px-5 md:px-20 xl:px-10 pt-10 pb-20'>
             <div className='flex-1 flex-grow-4 self-start max-w-none prose-lg mx-4 text-gray-700'>
               <div className='text-center mx-auto md:w-[80%]'>
