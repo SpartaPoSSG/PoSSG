@@ -86,6 +86,7 @@ class AuthAPIView(APIView):
         user = authenticate(
             email=request.data.get("email"), password=request.data.get("password")
         )
+        print("User:",user)
         # 이미 회원가입 된 유저일 때
         if user is not None:
             serializer = UserSerializer(user)

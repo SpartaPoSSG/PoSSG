@@ -33,7 +33,7 @@ class File(models.Model):
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.user.username} - {self.sector}/{self.title}/{self.file_name}"
+        return f"{self.user.nickname} - {self.sector}/{self.title}/{self.file_name}"
     
     
 
@@ -43,6 +43,7 @@ class Portfolio(models.Model):
     title = models.CharField(max_length=255)
     summary = models.TextField()
     pdf_file = models.FileField(upload_to='portfolios/')
+    result = models.TextField()
 
     def __str__(self):
-        return f"{self.user.username} - {self.sector}/{self.title}"
+        return f"{self.user.nickname} - {self.sector}/{self.title}"

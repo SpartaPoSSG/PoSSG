@@ -1,12 +1,12 @@
 from django.urls import path
 
-from .views import CreateUserFolder, UserFoldersInfoView, ImageUploadView , FileUploadView, SearchFilesView, DeleteUserFileView, PortfolioByFolderView, PortfolioTotalView, UserPortfolioView
+from .views import CreateUserFolder, UserFoldersInfoView, ImageUploadView , FileUploadView, SearchFilesView, DeleteUserFileView, PortfolioByFolderView, PortfolioMakeView, UserPortfolioView, RecommendView
 
 #from .views import make_folder_portfolio
 
 from django.conf.urls.static import static
 from django.conf import settings
-
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('create', CreateUserFolder.as_view(), name='create-folder'),
@@ -17,10 +17,9 @@ urlpatterns = [
     path('files', SearchFilesView.as_view(), name='search-files'),
     path('file-remove', DeleteUserFileView.as_view(), name='delete-user-file'),
     path('folder-portfolio', PortfolioByFolderView.as_view(), name='portfolio-by-folder'),
-    path('make-portfolio', PortfolioTotalView.as_view(), name='portfolio-total'),
-    path('total-portfolio', UserPortfolioView.as_view(), name='user-portfolio')
+    path('make-portfolio', PortfolioMakeView.as_view(), name='portfolio-total'),
+    path('total-portfolio', UserPortfolioView.as_view(), name='user-portfolio'),
+    path('recommend', RecommendView.as_view(), name='user-portfolio')
 
 ]
-
-
 

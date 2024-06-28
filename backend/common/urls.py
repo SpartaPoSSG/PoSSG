@@ -3,7 +3,7 @@ from .views import RegisterAPIView, AuthAPIView
 from rest_framework_simplejwt.views import TokenObtainPairView,TokenRefreshView
 from .views import *
 from rest_framework import routers
-
+from django.conf.urls.static import static
 
 app_name = 'common'
 
@@ -23,3 +23,4 @@ urlpatterns = [
 ]
 
 
+    

@@ -13,7 +13,7 @@ from rest_framework import status
 from rest_framework.exceptions import AuthenticationFailed
 from django.utils.text import slugify
 from django.core.files.storage import default_storage
-from .models import File
+from .models import File, Portfolio
 from .serializers import *
 import boto3
 from botocore.exceptions import NoCredentialsError
@@ -23,8 +23,12 @@ from .utils import get_user_folders_info
 import PyPDF2  # PdfMerger 모듈 임포트
 import sys
 sys.path.append('/home/honglee0317/possg/backend/possg')
+sys.path.append('/home/honglee0317/possg/backend/config')
 import tp
+from config.my_settings import *
 
+
+from pathlib import Path
 
 class CreateUserFolder(APIView):
     def post(self, request):
@@ -112,10 +116,11 @@ class ImageUploadView(APIView):
             return Response({"error": "Missing required fields."}, status=status.HTTP_400_BAD_REQUEST)
         
         new_filename = "thumbnail.jpg"
-        s3_file_path = os.path.join("user_uploads", user_name, sector, folder_name, new_filename)
+        s3_file_path = os.path.join("user_uploads", user_name, sector, folder_name, "thumbnails", new_filename)
 
         s3_url = upload_to_aws(file, 'possg', s3_file_path)
 
+        print("s3_url:", s3_url)
         if not s3_url:
             return Response({"error": "File upload failed."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -181,6 +186,7 @@ class FileUploadView(APIView):
             response_files = []
 
             for file in files:
+                print("file:", file)
                 upload_serializer = FileUploadSerializer(data={
                     'sector': sector,
                     'title': title,
@@ -188,7 +194,7 @@ class FileUploadView(APIView):
                 })
                 if upload_serializer.is_valid():
                     instance = upload_serializer.save()
-                    new_path = os.path.join(settings.MEDIA_ROOT, user_name, sector, title, os.path.basename(instance.file.name))
+                    new_path = os.path.join(settings.MEDIA_ROOT, user_name, sector, title, "pdf_thumbnails", os.path.basename(instance.file.name))
                     os.makedirs(os.path.dirname(new_path), exist_ok=True)
                     os.rename(instance.file.path, new_path)
                     instance.file.name = os.path.join(user_name, sector, title, os.path.basename(instance.file.name))
@@ -200,9 +206,19 @@ class FileUploadView(APIView):
                         images = convert_from_path(new_path, first_page=1, last_page=1)
                         if images:
                             pdf_image_path = f"{new_path}.png"
+                            print("pimage:",pdf_image_path)
                             images[0].save(pdf_image_path, 'PNG')
-                            thumbnail = pdf_image_path
-
+                            thumbnail_path = os.path.join("user_uploads", 'pdf_thumbnails', user_name, sector, title, pdf_image_path.split('/')[-1])
+                            print("thumb:", thumbnail_path)
+                            file_obj = open(pdf_image_path, 'rb')
+                            thumbnail = upload_to_aws(file_obj, 'possg', thumbnail_path)
+                            print("aws_thumb:", thumbnail)
+                    elif file_type == 'image':
+                        thumbnail_path = os.path.join("user_uploads", user_name, sector, title, file.name)
+                        thumbnail = upload_to_aws(file, 'possg', thumbnail_path)
+                        print("aws_thumb:", thumbnail)
+                        
+                        
                     File.objects.create(
                         user=user,
                         sector=sector,
@@ -213,8 +229,8 @@ class FileUploadView(APIView):
                     )
 
                     response_files.append({
-                        "file": instance.file.url,
-                        "src": instance.file.url
+                        "file": thumbnail,
+                        "src": thumbnail
                     })
                 else:
                     return Response(upload_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -225,11 +241,22 @@ class FileUploadView(APIView):
                 "files": response_files
             }, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+    
+    
 class SearchFilesView(APIView):
     def post(self, request, *args, **kwargs):
-        token = request.headers.get('Authorization').split()[1]
-        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
+        token = request.headers.get('Authorization', None)
+        if not token or not token.startswith('Bearer '):
+            raise AuthenticationFailed('Authorization token not provided or invalid format')
+
+        token = token.split('Bearer ')[1]
+        try:
+            payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Token has expired')
+        except jwt.InvalidTokenError:
+            raise AuthenticationFailed('Invalid token')
+
         user_id = payload.get('user_id')
         if not user_id:
             raise AuthenticationFailed('Token payload invalid')
@@ -240,36 +267,52 @@ class SearchFilesView(APIView):
         sector = request.data.get('sector')
         title = request.data.get('title')
 
+        if not sector or not title:
+            return Response({"error": "Sector and title are required"}, status=status.HTTP_400_BAD_REQUEST)
+
         base_path = os.path.join(settings.MEDIA_ROOT, user_name, sector, title)
         response_files = []
 
         if os.path.exists(base_path):
             for root, dirs, files in os.walk(base_path):
                 for file in files:
-                    file_path = os.path.join(root, file).split('folders/')[1]
-                    base_url = "http://35.192.203.252:8000/media/"
-                    file_url = base_url + file_path
-                    src_url = file_url
-                    
-                    print("file_url:", file_url)
-                    
+                    print(file)
+                    file_obj = get_object_or_404(File, user = user, sector = sector, title = title, file_name = file)
+                    relative_path = os.path.relpath(os.path.join(root, file), settings.MEDIA_ROOT)
+                    file_url = os.path.join(settings.MEDIA_URL, relative_path).replace('\\', '/')
+                    src_url = file_obj.thumbnail
+
+                    print("file_url:", file_url, "src_url:", src_url)
+
                     if file.lower().endswith('.pdf'):
                         try:
                             temp_path = os.path.join(root, file)
-                            temp_path.replace('.PDF', '.pdf')
-                            new_path = temp_path
-                            os.rename(temp_path, new_path)
+                            if temp_path.endswith('.PDF'):
+                                new_path = temp_path.replace('.PDF', '.pdf')
+                                os.rename(temp_path, new_path)
+                            else:
+                                new_path = temp_path
+
                             images = convert_from_path(new_path, first_page=1, last_page=1)
                             if images:
-                                pdf_image_path = "/home/honglee0317/possg/backend/media/folders/pdf_thumbnails"
+                                pdf_image_path = os.path.join(settings.MEDIA_ROOT, 'pdf_thumbnails')
+                                os.makedirs(pdf_image_path, exist_ok=True)
                                 image_path = os.path.join(pdf_image_path, file).replace('.pdf', '.png')
                                 images[0].save(image_path, 'PNG')
-                                src_url = base_url + image_path.split('folders/')[1]
+                                
+                                image_relative_path = os.path.relpath(image_path, settings.MEDIA_ROOT)
+                                
+                                src_url = os.path.join(settings.MEDIA_URL, image_relative_path).replace('\\', '/')
                         except Exception as e:
                             print(f"Error converting PDF to image: {e}")
-
+                    elif file.lower().endswith('.png') or file.lower().endswith('.jpg'):
+                        file_url = os.path.join(settings.MEDIA_URL, relative_path).replace('\\', '/')
+                        src_url = file_url
+                        
+                        print(file_url)
+                            
                     response_files.append({
-                        "file": file_url,
+                        "file": file,
                         "src": src_url
                     })
 
@@ -296,6 +339,8 @@ class SearchFilesView(APIView):
                 "files": [],
                 "folder_portfolio": ''
             }, status=status.HTTP_200_OK)
+            
+    
 
 class DeleteUserFileView(APIView):
     def post(self, request):
@@ -310,7 +355,7 @@ class DeleteUserFileView(APIView):
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
         user_id = payload.get('user_id')
         if not user_id:
-            raise AuthenticationFailed('Token payload invalid')
+            raise AuthenticationFailed('Token payload invalid') 
 
         user = get_object_or_404(User, pk=user_id)
         
@@ -329,8 +374,9 @@ class DeleteUserFileView(APIView):
         else:
             return JsonResponse({"message": "File does not exist"}, status=404)
 
+
 class PortfolioByFolderView(APIView):
-    def get(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         token = request.headers.get('Authorization', None)
         if token is None:
             raise AuthenticationFailed('Authorization token not provided')
@@ -351,29 +397,52 @@ class PortfolioByFolderView(APIView):
             raise AuthenticationFailed('Token payload invalid')
 
         user = get_object_or_404(User, pk=user_id)
+        print("User:", user)
         user_name = user.nickname
 
         sector = request.data.get('sector')
         title = request.data.get('title')
 
-        folder_paths = os.path.join("/home/honglee0317/possg/backend/media/folders", user_name, sector, title)
-        summary = tp.summary(folder_paths, user_name, sector, title)
+        if not sector or not title:
+            return Response({"error": "Sector and title are required"}, status=status.HTTP_400_BAD_REQUEST)
+
         
-        portfolio_folder = os.path.join(settings.MEDIA_ROOT, 'portfolio')
-        portfolio_filename = f"{user_name}_{sector}_{title}.pdf"
-        portfolio_filepath = os.path.join(portfolio_folder, portfolio_filename)
+        folder_paths = os.path.join("/home/honglee0317/possg/backend/media/folders", user_name, sector, title)
+        
+        print("folder_paths:", folder_paths)
+        
+        
+        print("tp:")
+        summary, result = tp.summary(folder_paths, user_name, sector, title)
+        
+        print("summary:", summary, "result:", result)
+        
+        portfolio_folder = os.path.join(settings.MEDIA_ROOT, 'portfolios')
+        os.makedirs(portfolio_folder, exist_ok=True)
+        #portfolio_filename = f"{user_name}_{sector}_{title}.pdf"
+        portfolio_filepath = f"""/home/honglee0317/possg/backend/media/folders/portfolio/{user_name}_{sector}_{title}.pdf"""
 
-        print("portfolio_filepath:", portfolio_filepath)
+        # Assuming the PDF is created and saved at portfolio_filepath
+        if not os.path.exists(portfolio_filepath):
+            return Response({"error": "Portfolio file not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        if os.path.exists(portfolio_filepath):
-            return Response({
-                             "summary": summary
-                             }, status=status.HTTP_200_OK)
-        else:
-            return Response({
-                "error": "Portfolio file not found"
-            }, status=status.HTTP_404_NOT_FOUND)
+        # 저장 또는 업데이트 로직
+        portfolio, created = Portfolio.objects.update_or_create(
+            user=user,
+            sector=sector,
+            title=title,
+            defaults={
+                'summary': summary,
+                'pdf_file': portfolio_filepath,
+                'result': result
+            }
+        )
+        print("portfolio created:", portfolio)
+        response_data = { 
+            "summary": portfolio.summary
+        }
 
+        return Response(response_data, status=status.HTTP_200_OK)
 
 # PDF 파일들을 병합하는 함수
 def merge_pdfs_from_folder(folder_path, output_path):
@@ -391,7 +460,7 @@ def merge_pdfs_from_folder(folder_path, output_path):
     merger.close()
 
 
-class PortfolioTotalView(APIView):
+class PortfolioMakeView(APIView):
     def get(self, request, *args, **kwargs):
         token = request.headers.get('Authorization', None)
         if token is None:
@@ -413,13 +482,18 @@ class PortfolioTotalView(APIView):
             raise AuthenticationFailed('Token payload invalid')
 
         user = get_object_or_404(User, pk=user_id)
-        print("user:", user)
         user_name = user.nickname
 
         portfolio_folder = os.path.join(settings.MEDIA_ROOT, user_name, 'portfolio')
         portfolio_filename = f"{user_name}_total.pdf"
         portfolio_filepath = os.path.join(portfolio_folder, portfolio_filename)
         print("portfolio_filepath:", portfolio_filepath)
+
+        
+        portfolios = Portfolio.objects.filter(user=user)
+
+        results = [portfolio.result for portfolio in portfolios if portfolio.result]
+
 
         # 포트폴리오 폴더가 존재하지 않는 경우 폴더 생성
         if not os.path.exists(portfolio_folder):
@@ -428,8 +502,19 @@ class PortfolioTotalView(APIView):
         # 포트폴리오 파일 병합
         merge_pdfs_from_folder(portfolio_folder, portfolio_filepath)
 
+        sector = portfolios[0].sector
+        title = portfolios[0].title
+
         if os.path.exists(portfolio_filepath):
-            return FileResponse(open(portfolio_filepath, 'rb'), content_type='application/pdf')
+            print("File exists")
+            #return FileResponse(open(portfolio_filepath, 'rb'), content_type='application/pdf')
+            
+            response_data = []
+            for i in range(len(results)):
+                response_data.append({"sector": sector,
+                    "folderName": title,
+                    "results": results[i] })
+            return Response(response_data, status=status.HTTP_200_OK)
         else:
             return Response({
                 "error": "Portfolio file not found"
@@ -461,26 +546,82 @@ class UserPortfolioView(APIView):
         # 사용자 객체 가져오기
         user = get_object_or_404(User, pk=user_id)
         user_name = user.nickname
-
+        portfolios = Portfolio.objects.filter(user=user)
+        results = [portfolio.result for portfolio in portfolios if portfolio.result]
+        '''
         # 파일 경로 설정
-        sector = request.query_params.get('sector')
-        title = request.query_params.get('title')
+        sector = request.data.get('sector')
+        title = request.data.get('title')
         if not sector or not title:
+            print("Missing 'sector' or 'title' query parameter")
             return Response({
                 "error": "Missing 'sector' or 'title' query parameter"
             }, status=status.HTTP_400_BAD_REQUEST)
 
+
         portfolio_folder = os.path.join(settings.MEDIA_ROOT, 'folders', 'portfolio')
         portfolio_filename = f"{user_name}_{sector}_{title}.pdf"
+        
         portfolio_filepath = os.path.join(portfolio_folder, portfolio_filename)
+        '''
+        
+        sector = portfolios[0].sector
+        title = portfolios[0].title
 
-        # 포트폴리오 파일 존재 여부 확인 및 반환
+
+        response_data = []
+        for i in range(len(results)):
+            response_data.append({"sector": sector,
+                "folderName": title,
+                "results": results[i] })
+        return Response(response_data, status=status.HTTP_200_OK)
+
         if os.path.exists(portfolio_filepath):
-            return FileResponse(open(portfolio_filepath, 'rb'), content_type='application/pdf')
+            print("File exists")
+            #return FileResponse(open(portfolio_filepath, 'rb'), content_type='application/pdf')
+            
+            response_data = []
+            for i in range(len(results)):
+                response_data.append({"sector": sector,
+                    "folderName": title,
+                    "results": results[i] })
+            return Response(response_data, status=status.HTTP_200_OK)
         else:
             return Response({
                 "error": "Portfolio file not found"
             }, status=status.HTTP_404_NOT_FOUND)
             
             
-            
+class RecommendView(APIView):
+    def get(self, request, *args, **kwargs):
+        # Authorization 헤더에서 JWT 토큰 추출
+        token = request.headers.get('Authorization', None)
+        if token is None:
+            raise AuthenticationFailed('Authorization token not provided')
+
+        if not token.startswith('Bearer '):
+            raise AuthenticationFailed('Invalid token format')
+        token = token.split('Bearer ')[1]
+
+        try:
+            payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Token has expired')
+        except jwt.InvalidTokenError:
+            raise AuthenticationFailed('Invalid token')
+
+        user_id = payload.get('user_id')
+        if not user_id:
+            raise AuthenticationFailed('Token payload invalid')
+
+        # 사용자 객체 가져오기
+        user = get_object_or_404(User, pk=user_id)
+        user_name = user.nickname
+        portfolios = Portfolio.objects.filter(user=user)
+        results = [portfolio.result for portfolio in portfolios if portfolio.result]
+        msg = tp.Recommend(results)
+        print("msg:", msg)
+        
+        
+        
+        return Response({"message":msg}, status=status.HTTP_200_OK)

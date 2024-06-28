@@ -110,14 +110,27 @@ def save_to_markdown(prompt, response, filename="response.md"):
 
 def save_text_as_html(response, html_file_path = 'output.html'):
     # HTML 문서 템플릿 생성
+    
     html_file_path = 'output.html'
     html_content = response
 
+    head_index = html_content.find('<head>')
+
+    if head_index == -1:
+        # <head> 태그가 없는 경우, <html> 태그 뒤에 <meta charset="UTF-8"> 태그를 추가합니다.
+        html_content = '<html><head><meta charset="UTF-8"></head>' + html_content
+    else:
+        # <head> 태그 바로 다음에 <meta charset="UTF-8"> 태그를 추가합니다.
+        head_index += len('<head>')
+        html_content = html_content[:head_index] + '<meta charset="UTF-8">' + html_content[head_index:]
+    
+    
     # HTML 파일로 저장
     with open(html_file_path, 'w', encoding='utf-8') as html_file:
         html_file.write(html_content)
 
 import pdfkit
+from pyhtml2pdf import converter
 
 def make_portfolio(prompt):
     response = get_response(prompt)
@@ -134,7 +147,6 @@ def convert_html_to_pdf(html_file_path, pdf_file_path):
         'no-outline': None
     }
     pdfkit.from_file(html_file_path, pdf_file_path, options)
-
 
 def summary(IMAGE_FOLDER_PATHS, user_name, sector, title):
     
@@ -223,6 +235,7 @@ def summary(IMAGE_FOLDER_PATHS, user_name, sector, title):
     print("result:", portfolio)
     total_prompt = create_total_portfolio(portfolio)
 
+    '''
     messages = []  
     messages.append({
                         "role": "user",
@@ -235,17 +248,22 @@ def summary(IMAGE_FOLDER_PATHS, user_name, sector, title):
                         ]
                     })
 
+    print("anthropic result:", send_to_anthropic(messages))
+
     total_portfolio = send_to_anthropic(messages)['content'][0]['text']
 
     print("total:", total_portfolio)
-
+    '''
 
 
     
-
+    '''
     prompt = f"""{portfolio} 위 문서는 내가 취업을 위한 활동을 하기 위해 노력한 흔적들을 나열한 것이야. 내가 취업을 위해 한 해당 활동을 유추하고, 여기서 활동 제목, 활동 내용, 활동 성과를 추출 및 추론해서 총 600자 정도로 작성해줘. 
     단, 표 형태로 정리해 주고, html로 작성해서 정리해 줘. 응답은 순수 html문서만이 제공되어야 해. ```html 이런 거 다 빼. """
+    '''
     
+    #prompt = f"""{portfolio} 위 문서는 내가 취업을 위한 활동을 하기 위해 노력한 흔적들을 나열한 것이야. 내가 취업을 위해 한 해당 활동을 유추하고, 여기서 활동 제목, 활동 내용, 활동 성과를 추출 및 추론해서 각 항목별로 정리하고, 총 1000자 정도로 작성해줘."""
+    prompt = f"""{portfolio} 위 문서는 내가 취업을 위한 활동을 하기 위해 노력한 흔적들을 나열한 것이야. 내가 취업을 위해 한 해당 활동을 유추하고, 여기서 활동 제목, 활동 내용, 활동 성과를 추출 및 추론해서 반드시 각 항목별로 명시하고, 총 1000자 정도로 작성해줘."""
     
     
     make_portfolio(prompt)
@@ -258,8 +276,15 @@ def summary(IMAGE_FOLDER_PATHS, user_name, sector, title):
 
     print(f"포트폴리오가  저장되었습니다.")
     
-    summary_prompt = f"""다음 문서를 한 문장으로 요약하되, 'OO을 OO~한 프로젝트.'의 형식으로 끝나게 해 줘. '입니다'가 아니라 명사 형태의 문장이어야 해. '네 알겠습니다'와 같은 불필요한 말은 답변에서 제외해 줘. ex)Style Transfer룰 활용한 음원 추출 프로젝트. '{total_portfolio}'"""
+    summary_prompt = f"""다음 문서를 한 문장으로 요약하되, 'OO을 OO~한 프로젝트.'의 형식으로 끝나게 해 줘. '입니다'가 아니라 명사 형태의 문장이어야 해. '네 알겠습니다'와 같은 불필요한 말은 답변에서 제외해 줘. ex)Style Transfer룰 활용한 음원 추출 프로젝트. '{portfolio}'"""
     summary = get_response(summary_prompt)
-    return summary
+    result = get_response(prompt)
+    return summary, result
  
 #print("summary:", summary())
+
+def Recommend(sentence):
+    prompt = f"""다음 제공하는 사용자의 이력을 바탕으로 적합한 직무와 이유를 "직무:이유" 형식으로 추천해 줘. '네 알겠습니다'와 같은 불필요한 말은 답변에서 제외해 줘. '{sentence}'"""
+    result = get_response(prompt)
+    print("추천:", result)
+    return result

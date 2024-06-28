@@ -4,7 +4,9 @@ from botocore.exceptions import NoCredentialsError
 from django.conf import settings
 import urllib.parse
 import unicodedata
-
+import sys
+sys.path.append('/home/honglee0317/possg/backend/config')
+from config.my_settings import *
 '''
 def get_user_folders_info(base_path, username):
     user_folder_path = os.path.join(base_path, username)
@@ -37,8 +39,8 @@ def get_user_folders_info(base_path, username):
 
 def get_s3_client():
     s3 = boto3.client('s3',
-                      aws_access_key_id='AKIA6ODU6XD4OCV4IJAU',
-                    aws_secret_access_key='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',
+                      aws_access_key_id=aws_id,
+                    aws_secret_access_key=aws_key,
                     region_name='us-east-2'
                       )
     return s3
@@ -62,7 +64,8 @@ def get_user_folders_info(bucket_name, username):
             for folder_name in os.listdir(group_path):
                 folder_path = os.path.join(group_path, folder_name)
                 if os.path.isdir(folder_path):
-                    thumbnail_key = f"user_uploads/{username}/{group_name}/{folder_name}/thumbnail.jpg"
+                
+                    thumbnail_key = f"user_uploads/{username}/{group_name}/{folder_name}/thumbnails/thumbnail.jpg"
                     print("key:", thumbnail_key)
                     try:
                         s3.head_object(Bucket=bucket_name, Key=thumbnail_key)
@@ -72,7 +75,7 @@ def get_user_folders_info(bucket_name, username):
                         thumbnail_url = ""
                     
                     if thumbnail_url == "":
-                        thumbnail_url = " http://35.192.203.252:8000/media/thumbnails/"+ unicodedata.normalize('NFD', group_name) +"/thumbnail_default.png"
+                        thumbnail_url = f"""https://possg.s3.us-east-2.amazonaws.com/{group_name}.png"""
                     group_info["folders"].append({
                         "title": folder_name,
                         "src": thumbnail_url
