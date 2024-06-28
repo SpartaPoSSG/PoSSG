@@ -161,33 +161,28 @@ function ProjectFolder(props: {
             </div>
             
             <Modal show={openModal} size="md" onClose={() => setOpenModal(false)} popup>
-            <div className='fixed inset-0 z-40 bg-black opacity-50'></div>
-                {/* <div className='flex items-center justify-center h-screen'>
-                    <div className='bg-white rounded-lg shadow-lg p-6 w-100'> */}
-                    <div className='flex items-center justify-center fixed inset-0 z-50  opacity-100'>
-                        <div className='bg-white rounded-lg border-solid  border-black-500 p-70 flex flex-col justify-center items-center'>
-                        {/* <Modal.Header /> */}
-                        <Modal.Body>
-                            <div className="text-center">
+                <div className='fixed top-20 left-0 w-full h-full bg-gray-500 bg-opacity-60'></div>
+                    <div className='flex items-center justify-center fixed inset-0 opacity-100'>
+                        <div className='z-10 bg-white rounded-lg border-solid  border-black-500 p-70 flex flex-col justify-center items-center'>
+                            <Modal.Body>
+                            <div className="text-center px-10">
                                 <HiOutlineExclamationCircle className="mx-auto mb-4 h-14 w-14 text-gray-400 dark:text-black-200" />
                                 <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400 shadow-3xl">
-                                    Are you sure you want to delete this folder?
+                                    정말 삭제하시겠습니까?
                                 </h3>
                                 <div className="flex justify-center gap-4">
-                                    <Button className="bg-red-500 text-black" onClick={handleDeleteFolder}>
-                                        Yes, I'm sure
+                                    <Button className="bg-gray-100 text-black w-20 hover:bg-blue-600 hover:text-white" onClick={handleDeleteFolder}>
+                                        네
                                     </Button>
-                                    <Button color="gray" onClick={() => setOpenModal(false)}>
-                                        No, cancel
+                                    <Button className="bg-gray-100 text-black w-20 hover:bg-blue-600 hover:text-white" onClick={() => setOpenModal(false)}>
+                                        아니오
                                     </Button>
                                 </div>
                             </div>
                         </Modal.Body>
                     </div>
-                    </div>
-                {/* </div> */}
+                </div>
             </Modal>
-
         </>
 
     );
