@@ -104,13 +104,39 @@ const Portfolio = () => {
       {isLoading && <Loading1 />}
       {!isLoading ? (
         <>
+
+
           {/* {renderPdfDocument()} */}
-          {myPortfolio && Object.entries(myPortfolio).map(([key, item]) => (
+          {/* 원래 코드 */}
+          {/* {myPortfolio && Object.entries(myPortfolio).map(([key, item]) => (
               <div key={key}>
                   <h2 className='font-PretendardVariable'>{item.sector}</h2>
                   <p className='font-PretendardVariable'>{item.folderName}</p>
                   <pre className='font-PretendardVariable'>{item.results.replaceAll("*", "").replaceAll("#", "")}</pre>
               </div>
+          ))} */}
+
+
+
+          {myPortfolio && Object.entries(myPortfolio).map(([key, item]) => (
+            <div className='bg-g flex w-screen justify-center self-stretch text-gray-700'>
+              <div className='flex flex-1 flex-col md:flex-row box-border max-w-screen-xl items-center justify-start px-5 md:px-20 xl:px-10 pt-20 pb-1'>
+                <div className='flex-1 flex-grow-4 self-start max-w-none prose-lg mx-4 text-gray-700'>
+                  <div className='text-center mx-auto md:w-[80%]'>
+                    <div className="bg-gray-50 border border-gray-200 text-xs font-normal rounded-md mt-10 px-3 py-5 mx-3 text-center">
+                      <div className="flex justify-center items-center">
+                        <div key={key}>
+                          <h2 className='font-PretendardVariable'>{item.sector}</h2>
+                          <p className='font-PretendardVariable'>{item.folderName}</p>
+                          <pre className='font-PretendardVariable'>{item.results.replaceAll("*", "").replaceAll("#", "")}</pre>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
           ))}
         </>
       ) : (
@@ -146,14 +172,15 @@ const Portfolio = () => {
       {isRecommendLoading && <Loading2 />}
       {!isRecommendLoading && recommend && (
         <div className="mt-4 pl-10 pr-10 pt-10 pb-10 bg-blue-100 rounded-2xl text-left text-lg">
-          1. Machine Learning Engineer with Front-End Expertise: <br />
+          {/* 1. Machine Learning Engineer with Front-End Expertise: <br />
           머신 러닝 모델을 개발하고 이를 웹 애플리케이션에 통합하는 역할입니다. 프론트 엔드 기술을 활용해 데이터 시각화 및 인터랙티브 UI를 개발할 수 있습니다.<br />
           <br />
           2. Data Visualization Engineer: <br />
           대량의 데이터를 시각적으로 표현하는 작업을 담당합니다. 데이터 시각화 라이브러리(D3.js, Chart.js 등)를 사용하여 인사이트를 쉽게 이해할 수 있는 형태로 제공하는 역할입니다.<br />
           <br />
           3. Full-Stack Developer: <br />
-          프론트 엔드와 백 엔드 모두를 다루는 포지션으로, AI 기능을 포함한 웹 애플리케이션을 설계, 개발 및 유지보수합니다. 프론트 엔드와 백 엔드 기술 모두가 요구됩니다.
+          프론트 엔드와 백 엔드 모두를 다루는 포지션으로, AI 기능을 포함한 웹 애플리케이션을 설계, 개발 및 유지보수합니다. 프론트 엔드와 백 엔드 기술 모두가 요구됩니다. */}
+          {recommend}
         </div>
       )}
 
