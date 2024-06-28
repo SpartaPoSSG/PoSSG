@@ -71,7 +71,7 @@ const Portfolio = () => {
                   <div className="bg-white border border-gray-200 rounded-lg p-10 shadow-lg overflow-hidden">
                     {Object.entries(myPortfolio).map(([key, item]) => (
                       <div key={key} className="mb-5 last:mb-0">
-                        <h2 className='text-xl font-semibold'>{item.sector}</h2>
+                        <h2 className='text-xl font-semibold border-b-2 py-1 mb-2'>{item.sector}</h2>
                         {/* <p className='text-md'>{item.folderName}</p> */}
                         <p className='text-m whitespace-pre-wrap break-words'>{item.results.replaceAll("*", "").replaceAll("#", "")}</p>
                       </div>
