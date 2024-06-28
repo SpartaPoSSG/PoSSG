@@ -27,7 +27,7 @@ const Home = () => {
         '교내활동': ''
     });
 
-    const [containerWidth, setContainerWidth] = useState<number>(0);
+    const [containerWidth, setContainerWidth] = useState<number>(960);
     const [error, setError] = useState<string | null>(null);
     const [loggedIn, setLoggedIn] = useState(false);
     const [showHeroSection, setShowHeroSection] = useState(true);
