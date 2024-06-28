@@ -10,7 +10,7 @@ import { HiInformationCircle } from "react-icons/hi";
 
 
 function ProjectFolder(props: {
-    sector: string; title: string; src: string; setError: (error: string | null) => void;
+    sector: string; title: string; src: string; setError: (error: string | null) => void; onFolderDeleted: () => void;
 }) {
     const navigate = useNavigate(); 
     const token = localStorage.getItem('token');
@@ -57,9 +57,11 @@ function ProjectFolder(props: {
     };
 
     const handleDeleteFolder = async () => {
-        // 폴더 삭제
         if (token) {
             const folderResult = await manageFolder(token, {sector: props.sector, title: titleInput, new_title: "", is_Exist: 2});
+            if (folderResult && folderResult.data) {
+                props.onFolderDeleted();
+            }
             setOpenModal(false);
         }
     };

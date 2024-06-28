@@ -70,7 +70,7 @@ const Home = () => {
           }
 
         fetchFolders();
-    }, [loggedIn, token]);
+    }, [token]);
 
     useEffect(() => {
         const updateContainerWidth = () => {
@@ -132,14 +132,17 @@ const Home = () => {
         }
     };
 
-    const handleTitleInputChange = (e: React.ChangeEvent<HTMLInputElement>, sector: string) => {
-        setNewFolderNames({ ...newFolderNames, [sector]: e.target.value });
-    };
+    const handleFolderDeleted = (sector: string, deletedFolderTitle: string) => {
+        setFolders(prevFolders => prevFolders.map(folder => {
+            if (folder.name === sector) {
+                const updatedFolders = folder.folders.filter(f => f.title !== deletedFolderTitle);
+                
+                return { ...folder, folders: updatedFolders };
+            }
+            return folder;
+        }));
 
-    const handleTitleInputKeyPress = (e: React.KeyboardEvent<HTMLInputElement>, sector: string) => {
-        if (e.key === 'Enter') {
-            handleMakeFolder(e, sector);
-        }
+        console.log(folders);
     };
 
     function movePortfolioBtn(e: FormEvent): void {
@@ -179,13 +182,14 @@ const Home = () => {
                                         <div className="bg-gray-50 border border-gray-200 text-xs font-PretendardVariable font-normal rounded-md mt-3 px-3 py-5 mx-3 text-center">폴더가 없습니다.</div>
                                     ) : (
                                         <div className='grid grid-cols-1 md:grid-cols-3 gap-4 pt-5'>
-                                            {folders.map((folder, index) => (
-                                                <div key={index} className='flex flex-col w-full p-2'>
+                                            {folders.map((folder) => (
+                                                <div key={folder.title} className='flex flex-col w-full p-2'>
                                                     <ProjectFolder
                                                         sector={name}
                                                         src={folder.src}
                                                         title={folder.title}
                                                         setError={setError}
+                                                        onFolderDeleted={() => handleFolderDeleted(name, folder.title)}
                                                     />
                                                 </div>
                                             ))}
