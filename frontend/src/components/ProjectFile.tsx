@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import { MdDelete } from "react-icons/md";
-import { CustomFlowbiteTheme, TextInput } from 'flowbite-react';
 import { deleteFile } from '../api/possgAxios';
 import { useRecoilState } from 'recoil';
 import { selectedFolderState } from '../atom';
 
 function ProjectFile(props: {
-    file_name: string; name: string; src: string;
+    file_name: string; name: string; src: string; onDeleted: () => void;
 }) {
     const token = localStorage.getItem('token');
     const [titleInput, setTitleInput] = useState<string>(props.name);
@@ -19,9 +18,9 @@ function ProjectFile(props: {
                 title: folderInfo.title,
                 file_name: props.file_name
             }
-            console.log(">>>", fileInfo);
 
             await deleteFile(token, fileInfo);
+            props.onDeleted();
         }
     };
 

@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
 import { MdEdit,MdDelete, MdPhoto } from "react-icons/md";
-import { CustomFlowbiteTheme, TextInput, Button, Modal,Alert } from 'flowbite-react';
+import { CustomFlowbiteTheme, TextInput, Button, Modal } from 'flowbite-react';
 import { manageFolder ,uploadThumbnail} from '../api/possgAxios';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { selectedFolderState } from '../atom';
 import { HiOutlineExclamationCircle } from "react-icons/hi";
-import { HiInformationCircle } from "react-icons/hi";
 
 
 function ProjectFolder(props: {
-    sector: string; title: string; src: string; setError: (error: string | null) => void;
+    sector: string; title: string; src: string; setError: (error: string | null) => void; onFolderDeleted: () => void;
 }) {
     const navigate = useNavigate(); 
     const token = localStorage.getItem('token');
@@ -57,9 +56,11 @@ function ProjectFolder(props: {
     };
 
     const handleDeleteFolder = async () => {
-        // 폴더 삭제
         if (token) {
             const folderResult = await manageFolder(token, {sector: props.sector, title: titleInput, new_title: "", is_Exist: 2});
+            if (folderResult && folderResult.data) {
+                props.onFolderDeleted();
+            }
             setOpenModal(false);
         }
     };
@@ -126,7 +127,6 @@ function ProjectFolder(props: {
             <div className="relative">
                 <img className='h-48 rounded-lg rounded-b-none cursor-pointer object-cover w-full' src={previewSrc} alt="Project Folder" onClick={handleFolderClick}/>
                 <div className="absolute top-2 right-2 flex">
-                    {/* <MdDelete className="text-white bg-black/50 rounded-full p-1 cursor-pointer text-xl" onClick={handleDeleteFolder} /> */}
                     <MdDelete className="text-white bg-black/50 rounded-full p-1 cursor-pointer text-xl" onClick={() => setOpenModal(true)} />
                     <MdPhoto className="text-white bg-black/50 rounded-full p-1 ml-2 cursor-pointer text-xl" onClick={handleFileUpload} />
                 </div>
@@ -159,35 +159,29 @@ function ProjectFolder(props: {
             </div>
             
             <Modal show={openModal} size="md" onClose={() => setOpenModal(false)} popup>
-            <div className='fixed inset-0 z-40 bg-black opacity-50'></div>
-                {/* <div className='flex items-center justify-center h-screen'>
-                    <div className='bg-white rounded-lg shadow-lg p-6 w-100'> */}
-                    <div className='flex items-center justify-center fixed inset-0 z-50  opacity-100'>
-                        <div className='bg-white rounded-lg border-solid  border-black-500 p-70 flex flex-col justify-center items-center'>
-                        {/* <Modal.Header /> */}
-                        <Modal.Body>
-                            <div className="text-center">
+                <div className='fixed top-20 left-0 w-full h-full bg-gray-500 bg-opacity-60'></div>
+                    <div className='flex items-center justify-center fixed inset-0 opacity-100'>
+                        <div className='z-10 bg-white rounded-lg border-solid  border-black-500 p-70 flex flex-col justify-center items-center'>
+                            <Modal.Body>
+                            <div className="text-center px-10">
                                 <HiOutlineExclamationCircle className="mx-auto mb-4 h-14 w-14 text-gray-400 dark:text-black-200" />
                                 <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400 shadow-3xl">
-                                    Are you sure you want to delete this folder?
+                                    정말 삭제하시겠습니까?
                                 </h3>
                                 <div className="flex justify-center gap-4">
-                                    <Button className="bg-red-500 text-black" onClick={handleDeleteFolder}>
-                                        Yes, I'm sure
+                                    <Button className="bg-gray-100 text-black w-20 hover:bg-blue-600 hover:text-white" onClick={handleDeleteFolder}>
+                                        네
                                     </Button>
-                                    <Button color="gray" onClick={() => setOpenModal(false)}>
-                                        No, cancel
+                                    <Button className="bg-gray-100 text-black w-20 hover:bg-blue-600 hover:text-white" onClick={() => setOpenModal(false)}>
+                                        아니오
                                     </Button>
                                 </div>
                             </div>
                         </Modal.Body>
                     </div>
-                    </div>
-                {/* </div> */}
+                </div>
             </Modal>
-
         </>
-
     );
 }
 

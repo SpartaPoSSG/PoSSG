@@ -1,7 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { BiUpload } from "react-icons/bi";
-import Footer from '../components/Footer';
 import ProjectPreview from '../components/ProjectPreview';
 import { Document, Page, pdfjs } from "react-pdf";
 import ProjectFile from '../components/ProjectFile';
@@ -11,7 +9,6 @@ import { selectedFolderState } from '../atom';
 import { Banner, Button, Dropdown, Spinner } from 'flowbite-react';
 import { FaWandMagicSparkles } from "react-icons/fa6";
 import { HiX } from 'react-icons/hi';
-import { MdAnnouncement } from "react-icons/md";
 import UploadLoading from '../components/UploadLoading';
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
@@ -176,9 +173,13 @@ const ProjectDetail = () => {
     }
   };
 
+  const handleFileDeleted = (fileName: string) => {
+    setFileFinals(prevFiles => prevFiles.filter(file => file.name !== fileName));
+  };
+
   useEffect(() => {
     fetchFiles();
-  }, []);
+  }, [token]);
 
   useEffect(() => {
     const updateContainerWidth = () => {
@@ -275,12 +276,13 @@ const ProjectDetail = () => {
               </div>
               <div className='mt-5'>
                 <div className='grid grid-cols-1 md:grid-cols-5 gap-2 ml-3 mr-3 mt-5 mb-5'>
-                  {fileFinals.map((fileFinals, index) => (
-                    <div key={index} className='flex flex-col w-full pb-1'>
+                  {fileFinals.map((fileFinals) => (
+                    <div key={fileFinals.file.name} className='flex flex-col w-full pb-1'>
                       <ProjectFile
                         file_name={fileFinals.file.name}
                         name={fileFinals.name}
                         src={fileFinals.preview}
+                        onDeleted={() => handleFileDeleted(fileFinals.name)}
                       />
                     </div>
                   ))}

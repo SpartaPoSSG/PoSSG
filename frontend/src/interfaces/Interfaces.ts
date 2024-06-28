@@ -88,7 +88,3 @@ export interface portfolioInfo {
     // folderName: string;
     // results: string;
 }
-
-export interface Recommend {
-    recommend: string;
-}

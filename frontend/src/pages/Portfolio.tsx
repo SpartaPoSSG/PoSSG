@@ -47,10 +47,9 @@ const Portfolio = () => {
     if (token) {
       const successResponse = await getRecommend(token);
       if (successResponse && successResponse.data) {
-        setRecommend(successResponse.data.recommend); // 가정: 추천 응답 객체에 'recommend' 속성이 있음
-        console.log("직무 요청 성공")
+        setRecommend(successResponse.data.message); // 가정: 추천 응답 객체에 'recommend' 속성이 있음
+        console.log(successResponse.data.message);
         setIsRecommendLoading(false); // 로딩 종료
-        console.log("직무 추천 받아오기 성공");
       }
     }
   };
