@@ -74,17 +74,23 @@ export interface FolderPortfolio {
     summary: string;
 }
 
-export interface MyPortfolio {
-    result: portfolioInfo[];
-}
-
 export interface portfolioInfo {
     [key: number]: {
         sector: string;
         folderName: string;
         results: string;
     };
-    // sector: string;
-    // folderName: string;
-    // results: string;
 }
+
+export interface PortfolioItem {
+    id: number;
+    sector: string;
+    folderName: string;
+    results: string;
+}
+
+export interface MyPortfolio extends Array<PortfolioItem> {}
+
+export interface GroupedPortfolio {
+    [sector: string]: PortfolioItem[];
+  }

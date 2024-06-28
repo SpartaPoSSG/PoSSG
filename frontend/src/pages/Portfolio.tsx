@@ -3,7 +3,7 @@ import Footer from '../components/Footer';
 import { useEffect, useState } from 'react';
 import { getPortfolio, makePortfolio, getRecommend } from '../api/possgAxios';
 import Loading1 from '../components/Loading1';
-import { MyPortfolio } from '../interfaces/Interfaces';
+import { MyPortfolio, GroupedPortfolio } from '../interfaces/Interfaces';
 import { FaSpinner } from 'react-icons/fa';
 
 
@@ -13,6 +13,8 @@ const Portfolio = () => {
   const [myPortfolio, setMyPortfolio] = useState<MyPortfolio>();
   const [recommend, setRecommend] = useState<string[]>();
   const [isRecommendLoading, setIsRecommendLoading] = useState<boolean>(false); // 직무 추천 로딩 상태 추가
+  const [groupedPortfolio, setGroupedPortfolio] = useState<GroupedPortfolio>({});
+
 
   const makePortfolioButton = async () => {
     setIsLoading(true);
@@ -55,6 +57,20 @@ const Portfolio = () => {
     fetchRecommend();
   }, [token]);
 
+  useEffect(() => {
+    if (myPortfolio && myPortfolio.length > 0) {
+      const groupBySector = myPortfolio.reduce<GroupedPortfolio>((acc, item) => {
+        if (!acc[item.sector]) {
+          acc[item.sector] = [];
+        }
+        acc[item.sector].push(item);
+        return acc;
+      }, {});
+  
+      setGroupedPortfolio(groupBySector);
+    }
+  }, [myPortfolio]);
+
 
   return (
     <>
@@ -69,11 +85,16 @@ const Portfolio = () => {
               <div className='flex-1 mx-4 text-gray-700'>
                 <div className='text-start mx-auto md:w-[80%]'>
                   <div className="bg-white border border-gray-200 rounded-lg p-10 shadow-lg overflow-hidden">
-                    {Object.entries(myPortfolio).map(([key, item]) => (
-                      <div key={key} className="mb-5 last:mb-0">
-                        <h2 className='text-xl font-semibold border-b-2 py-1 mb-2'>{item.sector}</h2>
-                        {/* <p className='text-md'>{item.folderName}</p> */}
-                        <p className='text-m whitespace-pre-wrap break-words'>{item.results.replaceAll("*", "").replaceAll("#", "")}</p>
+                    {Object.entries(groupedPortfolio).map(([sector, items]) => (
+                      <div key={sector}>
+                        <h2 className='text-xl font-bold border-b-2 pb-1 mb-5'>{sector}</h2>
+                        {items.map((item) => (
+                          <div key={item.id}>
+                            {/* <p className='text-md'>{item.folderName}</p> */}
+                            <p className='text-m whitespace-pre-wrap break-words'>{item.results.replaceAll("*", "").replaceAll("#", "")}</p>
+                            <p className='border-b-2 pb-5 mb-5'></p>
+                          </div>
+                        ))}
                       </div>
                     ))}
                   </div>
