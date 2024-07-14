@@ -3,7 +3,7 @@ import { EmailResponse, Folder, LoginResponse, User, Users, SuccessResponse, MyF
 
 
 const possgAxios = axios.create({
-    baseURL: "https://possg.duckdns.org/api",
+    baseURL: "/api",
 });
 
 // 회원가입
