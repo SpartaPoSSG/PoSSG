@@ -3,7 +3,7 @@ import { EmailResponse, Folder, LoginResponse, User, Users, SuccessResponse, MyF
 
 
 const possgAxios = axios.create({
-    baseURL: "/api",
+    baseURL: "https://possg.duckdns.org/api",
 });
 
 // 회원가입
@@ -66,7 +66,7 @@ export const checkEmail = async (
             { email },
             { headers: {
                 withCredentials: true,
-                "Access-Control-Allow-Origin": `https://possg.vercel.app`,
+                "Access-Control-Allow-Origin": `https://possg.duckdns.org`,
                 'Access-Control-Allow-Credentials':"true",
              }}
         );
