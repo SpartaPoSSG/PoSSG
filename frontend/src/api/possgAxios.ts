@@ -3,7 +3,7 @@ import { EmailResponse, Folder, LoginResponse, User, Users, SuccessResponse, MyF
 
 
 const possgAxios = axios.create({
-baseURL: "http://35.192.203.252:8000/api",
+baseURL: "https://35.192.203.252:8000/api",
 });
 
 // 회원가입
