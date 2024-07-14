@@ -58,5 +58,5 @@
   "devDependencies": {
     "@types/underscore": "^1.11.12"
   },
-  "proxy": "https://possg.duckdns.org/api"
+  "proxy": "https://possg.duckdns.org"
 }
