@@ -1,15 +1,8 @@
 {
-    "version": 2,
-    "builds": [
+    "rewrites": [
       {
-        "src": "manage.py",
-        "use": "@vercel/python"
-      }
-    ],
-    "routes": [
-      {
-        "src": "/(.*)",
-        "dest": "manage.py"
+        "source": "/api/:path*",
+        "destination": "https://35.192.203.252:8000/:path*"
       }
     ]
 }
