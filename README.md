@@ -8,7 +8,7 @@
 ![Herosection_possg](https://github.com/SpartaPoSSG/PoSSG/assets/80433455/44c126ec-5703-4ad6-bd5b-f79aa7bbfe53)
 
 ## ⏰ 프로젝트 기간
-2024.04.07 ~ 2024.06.29
+2024.04.07 ~ ing
 <br><br><br>
 
 ## 🛠️ Tech Stacks
